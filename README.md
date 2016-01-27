@@ -27,8 +27,11 @@ ______________________________________________
 Controls:
 
 w - main engine
+
 a - left engine
+
 d - right engine
+
 n, space - restart game (new rocket)
 
 ______________________________________________
