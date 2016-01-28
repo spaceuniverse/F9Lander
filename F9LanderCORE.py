@@ -1,5 +1,5 @@
 # -------------------------------------------------- #
-# ---------------------_F9_Lander_------------------ #
+# --------------------_F9_Lander_------------------- #
 # -------------------------------------------------- #
 # imports
 
@@ -40,7 +40,7 @@ class World(object):
         self.colors = options.colors
         #
         self.wind = True
-        self.wind_str = np.random.random_integers(-90, 90) * 1.0
+        self.wind_str = np.random.random_integers(-70, 70) * 1.0
         #
         self.gravity = -30.0
         #
@@ -110,6 +110,7 @@ class Rocket(object):
         #
         self.height = 7.1
         self.width = 0.7
+        # rocket architecture | boxes and blocks
         self.body = world_obj.world.CreateDynamicBody(position=(self.position_x, self.position_y),
                                                       angle=self.position_angle,
                                                       userData="actor_body")
@@ -256,13 +257,13 @@ class Simulation(object):
         self.message = ""
 
     def __restart__(self, world_obj, simulation_array):
-        print "All", len(world_obj.world.bodies), len(simulation_array)
+        print "B: Bodies, objects", len(world_obj.world.bodies), len(simulation_array)
         for entity in simulation_array:
             if entity.type == "actor":
                 world_obj.world.DestroyBody(entity.body)
                 simulation_array.remove(entity)
                 # del entity   # manual deleting obj
-                world_obj.wind_str = np.random.random_integers(-90, 90) * 1.0
+                world_obj.wind_str = np.random.random_integers(-70, 70) * 1.0
                 simulation_array.append(Rocket(world_obj))
         return simulation_array
 
@@ -350,10 +351,10 @@ class Simulation(object):
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                 self.running = False
                 pygame.quit()
-                print "Done"
+                print "All engines stopped"
             if event.type == KEYDOWN and event.key == K_SPACE:
                 simulation_array = self.__restart__(world_obj, simulation_array)
-                print "All", len(world_obj.world.bodies), len(simulation_array)
+                print "A: Bodies, objects", len(world_obj.world.bodies), len(simulation_array)
                 # here was code from __restart__()
         return report_list
 
