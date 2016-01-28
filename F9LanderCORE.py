@@ -89,8 +89,10 @@ class Platform(object):
 
     def report(self):
         # delete returning of fixture and body
-        return {"type": "decoration", "p_body": self.body, "angle": self.body.angle,
-                "px": self.body.position[0], "py": self.body.position[1], "fixtures": self.body.fixtures}
+        # return {"type": "decoration", "p_body": self.body, "angle": self.body.angle,
+        #        "px": self.body.position[0], "py": self.body.position[1], "fixtures": self.body.fixtures}
+        return {"type": "decoration", "angle": self.body.angle, "px": self.body.position[0],
+                "py": self.body.position[1]}
 
 
 # -------------------------------------------------- #
@@ -228,10 +230,15 @@ class Rocket(object):
 
     def report(self):
         # delete returning of fixture and body
-        return {"type": "actor", "p_body": self.body, "angle": self.body.angle, "fuel": self.fuel,
+        # return {"type": "actor", "p_body": self.body, "angle": self.body.angle, "fuel": self.fuel,
+        #        "vx": self.body.linearVelocity[1], "vy": self.body.linearVelocity[0],
+        #        "px": self.body.position[0], "py": self.body.position[1], "fixtures": self.body.fixtures,
+        #        "dist": self.dist1, "live": self.live, "enj": self.enj, "contact": self.contact, "wind": self.wind_str,
+        #        "contact_time": self.contact_time}
+        return {"type": "actor", "angle": self.body.angle, "fuel": self.fuel,
                 "vx": self.body.linearVelocity[1], "vy": self.body.linearVelocity[0],
-                "px": self.body.position[0], "py": self.body.position[1], "fixtures": self.body.fixtures,
-                "dist": self.dist1, "live": self.live, "enj": self.enj, "contact": self.contact, "wind": self.wind_str,
+                "px": self.body.position[0], "py": self.body.position[1], "dist": self.dist1,
+                "live": self.live, "enj": self.enj, "contact": self.contact, "wind": self.wind_str,
                 "contact_time": self.contact_time}
 
 
