@@ -140,6 +140,7 @@ class Rocket(object):
         self.contact = False
         self.dist1 = 999.0   # placeholder for 1 fixture
         self.dist2 = 999.0   # placeholder for 2 fixture
+        self.contact_time = 0
         #
         self.debug = False
         self.debug_p = (world_obj.screen_width / world_obj.pixels_per_meter / 2,
@@ -150,9 +151,13 @@ class Rocket(object):
         self.contact = False
         if len(self.body.contacts) > 0 and self.dist1 < 0.5:   # 0.1
             self.contact = True
+            self.contact_time += 0.01   # 2.5 sec * 90 iteration = 225 iteration * 0.01 = 2.25
+            print self.contact_time
             # print self.body.contacts
             if np.fabs(self.body.linearVelocity[1]) > self.durability or np.fabs(self.body.linearVelocity[0]) > self.durability:
                 self.live = False
+        else:
+            self.contact_time = 0
 
     def __dist__(self):
         polygonA1 = self.box.shape
@@ -226,7 +231,8 @@ class Rocket(object):
         return {"type": "actor", "p_body": self.body, "angle": self.body.angle, "fuel": self.fuel,
                 "vx": self.body.linearVelocity[1], "vy": self.body.linearVelocity[0],
                 "px": self.body.position[0], "py": self.body.position[1], "fixtures": self.body.fixtures,
-                "dist": self.dist1, "live": self.live, "enj": self.enj, "contact": self.contact, "wind": self.wind_str}
+                "dist": self.dist1, "live": self.live, "enj": self.enj, "contact": self.contact, "wind": self.wind_str,
+                "contact_time": self.contact_time}
 
 
 # -------------------------------------------------- #
@@ -255,8 +261,11 @@ class Simulation(object):
         self.step_number = 0
         #
         self.message = ""
+        #
+        self.win = "none"   # "landed", "destroyed"
 
     def __restart__(self, world_obj, simulation_array):
+        self.win = "none"
         print "B: Bodies, objects", len(world_obj.world.bodies), len(simulation_array)
         for entity in simulation_array:
             if entity.type == "actor":
@@ -324,11 +333,13 @@ class Simulation(object):
                                          (vertices[1][0] + np.random.random_integers(3, 7), vertices[1][1] + np.random.random_integers(11, 17))))
         for entity in simulation_array:
             if entity.type == "actor":
-                if entity.live and entity.contact:
+                if entity.live and entity.contact and entity.contact_time >= 2.25:   # why 2.25 read in obj field
                     entity.color = (0, 255, 0, 255)
+                    self.win = "landed"
                     # entity.wind = False   # stops wind for this obj
                 if not entity.live:
                     entity.color = (255, 0, 0, 255)
+                    self.win = "destroyed"
                     # entity.wind = False
         world_obj.world.Step(1.0 / self.target_fps, 10, 10)   # 10 10 | 6 2
         world_obj.world.ClearForces()   # but why?
@@ -340,7 +351,8 @@ class Simulation(object):
         self.clock.tick(self.target_fps)
         #
         report_list = self.__global_report__(simulation_array)
-        report_list.append({"step": self.step_number})
+        report_list.append({"step": self.step_number, "flight_status": self.win})
+        # print self.win
         #
         self.step_number += 1
         self.message = ""
