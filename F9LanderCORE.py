@@ -57,7 +57,7 @@ class Platform(object):
         self.type = "decoration"
         self.color = (255, 255, 255, 255)
         self.position_x = (world_obj.screen_width / world_obj.pixels_per_meter) / 2
-        self.position_y = 3   # 3
+        self.position_y = 3.5   # 3
         self.position_angle = 0
         #
         self.vel_x = 0.0
@@ -68,7 +68,7 @@ class Platform(object):
                                                         angle=self.position_angle,
                                                         # shapes=polygonShape(box=(12, 0.8)),
                                                         userData="decoration_body")
-        self.box = self.body.CreatePolygonFixture(box=(12, 0.8),
+        self.box = self.body.CreatePolygonFixture(box=(12, 0.9),   # 0.8
                                                   density=0,
                                                   friction=0.3,
                                                   restitution=0)
