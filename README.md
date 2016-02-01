@@ -14,13 +14,13 @@ https://www.python.org/downloads/
 1. **pygame**
 http://www.pygame.org/download.shtml
 
-    ```installation of pygame with anaconda:
+    installation of pygame with anaconda:
 
     http://stackoverflow.com/questions/19636480/installation-of-pygame-with-anaconda
 
     the easiest way to install using conda is:
 
-    conda install -c https://conda.binstar.org/krisvanneste pygame```
+    conda install -c https://conda.binstar.org/krisvanneste pygame
 
 2. **pybox2d**
 https://github.com/pybox2d/pybox2d
@@ -40,13 +40,13 @@ ______________________________________________
 
 ###Controls:
 
-w - main engine
+**w** - main engine
 
-a - left engine
+**a** - left engine
 
-d - right engine
+**d** - right engine
 
-n, space - restart game (new rocket)
+**n, space** - restart game (new rocket)
 
 ______________________________________________
 
