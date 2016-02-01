@@ -42,7 +42,7 @@ class World(object):
         self.colors = options.colors
         #
         self.wind = True
-        self.wind_str = np.random.random_integers(-70, 70) * 1.0
+        self.wind_str = np.random.random_integers(-39, 39) * 1.0   # 70
         #
         self.gravity = -30.0
         #
@@ -59,15 +59,19 @@ class Platform(object):
         self.position_x = (world_obj.screen_width / world_obj.pixels_per_meter) / 2
         self.position_y = 3   # 3
         self.position_angle = 0
+        #
+        self.vel_x = 0.0
+        self.vel_y = 0.0
         # CreateDynamicBody CreateStaticBody
         # b2PolygonShape(vertices= [(-1,0),(1,0),(0,2)])
-        self.body = world_obj.world.CreateStaticBody(position=(self.position_x, self.position_y),
-                                                     angle=self.position_angle,
-                                                     shapes=polygonShape(box=(12, 0.8)),
-                                                     userData="decoration_body")
-        # self.box = self.body.CreatePolygonFixture(box=(12, 0.8),
-        #                                          density=0,
-        #                                          friction=1)
+        self.body = world_obj.world.CreateKinematicBody(position=(self.position_x, self.position_y),
+                                                        angle=self.position_angle,
+                                                        # shapes=polygonShape(box=(12, 0.8)),
+                                                        userData="decoration_body")
+        self.box = self.body.CreatePolygonFixture(box=(12, 0.8),
+                                                  density=0,
+                                                  friction=0.3,
+                                                  restitution=0)
         self.live = True
         self.report()
 
@@ -80,9 +84,9 @@ class Platform(object):
         self.body.angle = np.sin(self.position_angle) / 30
 
     def __position_go__(self):
-        self.position_x += np.sin(self.position_angle) / 30
-        self.position_y += np.sin(self.position_angle) / 50
-        self.body.position = (self.position_x, self.position_y)
+        self.vel_x = np.sin(self.position_angle) * 1.3   # / 30
+        self.vel_y = np.sin(self.position_angle) * 1.5   # / 50
+        self.body.linearVelocity = (self.vel_x, self.vel_y)
 
     def act(self):
         self.__inc_angle__()
@@ -94,7 +98,7 @@ class Platform(object):
         # return {"type": "decoration", "p_body": self.body, "angle": self.body.angle,
         #        "px": self.body.position[0], "py": self.body.position[1], "fixtures": self.body.fixtures}
         return {"type": "decoration", "angle": self.body.angle, "px": self.body.position[0],
-                "py": self.body.position[1]}
+                "py": self.body.position[1], "vx": self.body.linearVelocity[1], "vy": self.body.linearVelocity[0]}
 
 
 # -------------------------------------------------- #
@@ -120,14 +124,14 @@ class Rocket(object):
                                                       userData="actor_body")
         self.box = self.body.CreatePolygonFixture(box=(self.width, self.height),
                                                   density=1,
-                                                  friction=0.5)   # 0.3
+                                                  friction=0.3)   # 0.3
         # self.box2 = self.body.CreatePolygonFixture(box=(4, 2), density=1, friction=0.3)
         self.box2 = self.body.CreatePolygonFixture(vertices=[(-2, -self.height),
                                                              (2, -self.height),
                                                              (1.2, -self.height + 0.9),
                                                              (-1.2, -self.height + 0.9)],
                                                    density=1,
-                                                   friction=0.5,
+                                                   friction=0.3,
                                                    userData="wings")   # for naming this fixture
         self.fuel = 999.9   # 100.0
         self.consumption = 1.0   # 0.1
@@ -136,12 +140,12 @@ class Rocket(object):
         self.body.linearVelocity[1] = -39.0   # -30.0
         self.body.linearVelocity[0] = np.random.random_integers(-39, 39) * 1.0   # -20.0
         #
-        self.body.angle += 0.1999 * (self.body.linearVelocity[0] / 39.0)   # np.sign(self.body.linearVelocity[0])
+        self.body.angle += 0.2999 * (self.body.linearVelocity[0] / 39.0)   # np.sign(self.body.linearVelocity[0])
         #
         self.enj = True
         self.left_enj_power = 500.0
         self.right_enj_power = 500.0
-        self.main_enj_power = 599.0   # default 500.0 if 599.0 minus to fuel
+        self.main_enj_power = 700.0   # default 500.0 if 599.0 or 700.0 minus to fuel
         #
         self.live = True
         self.contact = False
@@ -158,7 +162,7 @@ class Rocket(object):
         self.contact = False
         if len(self.body.contacts) > 0 and self.dist1 < 0.5:   # 0.1
             self.contact = True
-            self.contact_time += 0.01   # 2.5 sec * 90 iteration = 225 iteration * 0.01 = 2.25
+            self.contact_time += 0.01   # 2.5 sec * 90 iteration = 225 iteration * 0.01 = 2.25 # + 0.5 for 3 sec
             print self.contact_time
             # print self.body.contacts
             if np.fabs(self.body.linearVelocity[1]) > self.durability or np.fabs(self.body.linearVelocity[0]) > self.durability:
@@ -203,7 +207,7 @@ class Rocket(object):
                 self.debug_p = p
                 # print p, "\n"
             self.body.ApplyForce(f, p, True)
-            self.fuel -= (self.consumption + 0.15)   # + 0.15 if 599.0
+            self.fuel -= (self.consumption + 0.25)   # + 0.15 if 599.0 + 0.25 if 700.0
         else:
             self.enj = False
 
@@ -284,7 +288,7 @@ class Simulation(object):
                 world_obj.world.DestroyBody(entity.body)
                 simulation_array.remove(entity)
                 # del entity   # manual deleting obj
-                world_obj.wind_str = np.random.random_integers(-70, 70) * 1.0
+                world_obj.wind_str = np.random.random_integers(-39, 39) * 1.0
                 simulation_array.append(Rocket(world_obj))
         return simulation_array
 
@@ -345,7 +349,7 @@ class Simulation(object):
                                          (vertices[1][0] + np.random.random_integers(3, 7), vertices[1][1] + np.random.random_integers(11, 17))))
         for entity in simulation_array:
             if entity.type == "actor":
-                if entity.live and entity.contact and entity.contact_time >= 2.25:   # why 2.25 read in obj field
+                if entity.live and entity.contact and entity.contact_time >= 2.75:   # why 2.25 read in obj field + 0.5
                     entity.color = (0, 255, 0, 255)
                     self.win = "landed"
                     # entity.wind = False   # stops wind for this obj

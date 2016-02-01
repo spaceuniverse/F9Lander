@@ -20,7 +20,9 @@ http://www.pygame.org/download.shtml
 
     the easiest way to install using conda is:
 
+    ```bash
     conda install -c https://conda.binstar.org/krisvanneste pygame
+    ```
 
 2. **pybox2d**
 https://github.com/pybox2d/pybox2d
