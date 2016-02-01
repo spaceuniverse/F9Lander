@@ -1,6 +1,5 @@
 ______________________________________________
 
-
 Simple 2d simulation of Falcon 9 rocket landing on an ocean platform.
 
 ______________________________________________
@@ -13,6 +12,14 @@ https://www.python.org/downloads/
 1. pygame
 http://www.pygame.org/download.shtml
 
+installation of pygame with anaconda:
+
+http://stackoverflow.com/questions/19636480/installation-of-pygame-with-anaconda
+
+the easiest way to install using conda is:
+
+conda install -c https://conda.binstar.org/krisvanneste pygame
+
 2. pybox2d
 https://github.com/pybox2d/pybox2d
 
@@ -23,6 +30,11 @@ n. common sense
 
 ______________________________________________
 
+Demo:
+
+https://youtu.be/wCqZF0uTbKY
+
+______________________________________________
 
 Controls:
 
@@ -40,7 +52,7 @@ Files:
 
 F9LanderCORE.py - main class
 
-LoopCORE.py and RunCORE.py - placeholders for the future work
+./experiments - folder with experimental scripts
 
 ^_^
 ______________________________________________

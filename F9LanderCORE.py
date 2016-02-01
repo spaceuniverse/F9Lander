@@ -7,6 +7,7 @@ import pygame
 from pygame.locals import *
 import numpy as np
 
+# for delay in debug launch
 import time
 
 # -------------------------------------------------- #
@@ -103,7 +104,7 @@ class Rocket(object):
         self.type = "actor"
         self.world_obj = world_obj   # not optimal
         self.color = (np.random.random_integers(50, 150), np.random.random_integers(50, 150), 255, 255)
-        self.position_x = (world_obj.screen_width / world_obj.pixels_per_meter) / 2 + np.random.random_integers(-30, 30)
+        self.position_x = (world_obj.screen_width / world_obj.pixels_per_meter) / 2 + np.random.random_integers(-21, 21)
         self.position_y = (world_obj.screen_height / world_obj.pixels_per_meter) / 4 * 4
         self.position_angle = 0
         #
@@ -127,16 +128,19 @@ class Rocket(object):
                                                    density=1,
                                                    friction=0.5,
                                                    userData="wings")   # for naming this fixture
-        self.fuel = 990.0   # 100.0
+        self.fuel = 999.9   # 100.0
         self.consumption = 1.0   # 0.1
         self.durability = 9.0   # 1.0
         #
         self.body.linearVelocity[1] = -39.0   # -30.0
+        self.body.linearVelocity[0] = np.random.random_integers(-39, 39) * 1.0   # -20.0
+        #
+        self.body.angle += 0.1999 * (self.body.linearVelocity[0] / 39.0)   # np.sign(self.body.linearVelocity[0])
         #
         self.enj = True
         self.left_enj_power = 500.0
         self.right_enj_power = 500.0
-        self.main_enj_power = 500.0
+        self.main_enj_power = 599.0   # default 500.0 if 599.0 minus to fuel
         #
         self.live = True
         self.contact = False
@@ -198,7 +202,7 @@ class Rocket(object):
                 self.debug_p = p
                 # print p, "\n"
             self.body.ApplyForce(f, p, True)
-            self.fuel -= self.consumption
+            self.fuel -= (self.consumption + 0.15)   # + 0.15 if 599.0
         else:
             self.enj = False
 
@@ -269,7 +273,7 @@ class Simulation(object):
         #
         self.message = ""
         #
-        self.win = "none"   # "landed", "destroyed"
+        self.win = "none"   # "none", "landed", "destroyed"
 
     def __restart__(self, world_obj, simulation_array):
         self.win = "none"
@@ -304,7 +308,7 @@ class Simulation(object):
                 # self position
                 # self.message += str(entity.body.position)
                 # self.message += " | Dist: " + str(entity.dist1)
-                self.message += " | Fuel: " + str(entity.fuel * entity.enj) + " | Engines: " + str(entity.enj)\
+                self.message += " | Fuel: " + str(np.round((entity.fuel * entity.enj), 1)) + " | Engines: " + str(entity.enj)\
                                 + " | Live: " + str(entity.live) + " | Contact: " + str(entity.contact)\
                                 + " | VX: " + str(np.round(entity.body.linearVelocity[1], 1))\
                                 + " | VY: " + str(np.round(entity.body.linearVelocity[0], 1))\
