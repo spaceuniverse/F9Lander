@@ -26,6 +26,7 @@ class Options(object):
         self.screen_width = 1024
         self.screen_height = 768
         self.target_fps = 90   # 60
+        # PIPE OR KEYBOARD PARAMETER HERE
         #
         self.colors = {staticBody: (255, 255, 255, 255), dynamicBody: (0, 0, 255, 255)}
 
@@ -296,7 +297,7 @@ class Simulation(object):
     def step(self, world_obj, simulation_array=[]):
         key = pygame.key.get_pressed()
         keys = [key[pygame.K_w], key[pygame.K_a], key[pygame.K_d], key[pygame.K_n]]
-        #
+        # INPUT FROM PIPE HERE
         self.screen.fill((0, 0, 0, 0))
         # apply graphic background
         # self.screen.blit(self.bg, (0, 0))
@@ -363,6 +364,7 @@ class Simulation(object):
         #
         report_list = self.__global_report__(simulation_array)
         report_list.append({"step": self.step_number, "flight_status": self.win})
+        # OUTPUT TO PIPE HERE
         # print self.win
         #
         self.step_number += 1
