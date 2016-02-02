@@ -1,17 +1,19 @@
 ______________________________________________
 # TODO
 ______________________________________________
-- External control and reading status through named pipe (fifo)
+- External control and reading status through named pipe (fifo) -> class()
 - AI module (maybe reinforcement learning or something else)
 ______________________________________________
 # TOTHINK
 ______________________________________________
 - Think about new rocket engine design (angle + power | 2 bodies, force to second + rotation | joint)
+- More realistic design (look real sizes etc.)
 - Think about waiting 3-5 sec before green light ***
 - Add dist to wings (to fix the bug when all velocity stops by wing, and landing is ok)
 - Add in main class field self.win and report it ***
 - http://stackoverflow.com/questions/13524039/friction-between-moving-static-body-and-dynamic-body -> no friction bug ***
 - http://stackoverflow.com/questions/6613022/box2d-colission-between-static-dynamic-bodies-causing-an-assert -> error collision
+- Sprites, graphics
 ______________________________________________
 *** done, need to test
 ______________________________________________
