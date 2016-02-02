@@ -57,8 +57,11 @@ class Platform(object):
         self.type = "decoration"
         self.color = (255, 255, 255, 255)
         self.position_x = (world_obj.screen_width / world_obj.pixels_per_meter) / 2
-        self.position_y = 3.5   # 3
+        self.position_y = 3.1   # 3
         self.position_angle = 0
+        #
+        self.height = 0.8
+        self.width = 12
         #
         self.vel_x = 0.0
         self.vel_y = 0.0
@@ -68,7 +71,13 @@ class Platform(object):
                                                         angle=self.position_angle,
                                                         # shapes=polygonShape(box=(12, 0.8)),
                                                         userData="decoration_body")
-        self.box = self.body.CreatePolygonFixture(box=(12, 0.9),   # 0.8
+        # box=(self.width, self.height),   # 0.8
+        self.box = self.body.CreatePolygonFixture(vertices=[(-self.width, 0),
+                                                            (-self.width, self.height),
+                                                            (self.width, self.height),
+                                                            (self.width, 0),
+                                                            (self.width - 2.2, -self.height),
+                                                            (-self.width + 2.2, -self.height)],
                                                   density=0,
                                                   friction=0.3,
                                                   restitution=0)
@@ -138,7 +147,7 @@ class Rocket(object):
         self.durability = 9.0   # 1.0
         #
         self.body.linearVelocity[1] = -39.0   # -30.0
-        self.body.linearVelocity[0] = np.random.random_integers(-39, 39) * 1.0   # -20.0
+        self.body.linearVelocity[0] = np.random.random_integers(-39, 39) * 1.0   # -20.0 | -30.0 in video
         #
         self.body.angle += 0.2999 * (self.body.linearVelocity[0] / 39.0)   # np.sign(self.body.linearVelocity[0])
         #
