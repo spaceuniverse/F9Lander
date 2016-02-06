@@ -46,6 +46,14 @@ ______________________________________________
 
 ###Controls:
 
+To change type of control fix line 35 in F9LanderCORE.py
+
+```bash
+self.commands = "socket"   # "keyboard" "socket"
+```
+
+**"keyboard"**
+
 **w** - main engine
 
 **a** - left engine
@@ -54,11 +62,53 @@ ______________________________________________
 
 **n, space** - restart game (new rocket)
 
+**"socket"**
+
+('127.0.0.1', 50007)
+
+Send list [1, 1, 1, 0] to socket where [up, left, right, new]
+
+1 - active
+
+0 - off
+
+______________________________________________
+
+###Information:
+
+To run in "keyboard" mode fix line 35 in F9LanderCORE.py
+
+```bash
+Run in console
+
+$ python F9LanderCORE.py
+```
+
+To run in "socket" mode fix line 35 in F9LanderCORE.py
+
+```bash
+Run in first console
+
+$ python F9LanderCORE.py
+
+Then run in second console
+
+$ python F9LanderClientCORE.py
+```
+
+To show opened sockets in Ubuntu
+
+```bash
+$ netstat -ntlp | grep LISTEN
+```
+
 ______________________________________________
 
 ###Files:
 
-F9LanderCORE.py - main class
+F9LanderCORE.py - main class | server |
+
+F9LanderClientCORE.py - external control script | client |
 
 ./experiments - folder with experimental scripts
 

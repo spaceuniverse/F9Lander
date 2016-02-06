@@ -1,11 +1,15 @@
 # -------------------------------------------------- #
 # --------------------_F9_Lander_------------------- #
+# ----------------------SERVER---------------------- #
 # -------------------------------------------------- #
 # imports
 
 import pygame
 from pygame.locals import *
 import numpy as np
+
+# for external commands
+import socket
 
 # for delay in debug launch
 import time
@@ -26,7 +30,9 @@ class Options(object):
         self.screen_width = 1024
         self.screen_height = 768
         self.target_fps = 90   # 60
-        # PIPE OR KEYBOARD PARAMETER HERE
+        # SOCKET, PIPE OR KEYBOARD PARAMETER HERE
+        # Socket ('127.0.0.1', 50007)
+        self.commands = "keyboard"   # "keyboard" "socket" | in future "fifo"
         #
         self.colors = {staticBody: (255, 255, 255, 255), dynamicBody: (0, 0, 255, 255)}
 
@@ -271,6 +277,8 @@ class Simulation(object):
         self.pixels_per_meter = options.pixels_per_meter
         self.colors = options.colors
         #
+        self.commands = options.commands
+        #
         pygame.init()
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height), 0, 32)
         pygame.display.set_caption("_F9_Lander_")
@@ -288,6 +296,14 @@ class Simulation(object):
         self.message = ""
         #
         self.win = "none"   # "none", "landed", "destroyed"
+        #
+        if self.commands == "socket":
+            self.sock = socket.socket()
+            self.sock.bind(('127.0.0.1', 50007))
+            self.sock.listen(1)
+            print "Waiting for client"
+            self.conn, self.addr = self.sock.accept()
+            print self.conn, self.addr
 
     def __restart__(self, world_obj, simulation_array):
         self.win = "none"
@@ -308,9 +324,19 @@ class Simulation(object):
         return report_list
 
     def step(self, world_obj, simulation_array=[]):
-        key = pygame.key.get_pressed()
-        keys = [key[pygame.K_w], key[pygame.K_a], key[pygame.K_d], key[pygame.K_n]]
-        # INPUT FROM PIPE HERE
+        keys = [0, 0, 0, 0]
+        # keys map [up, left, right, new]
+        if self.commands == "keyboard":
+            key = pygame.key.get_pressed()
+            keys = [key[pygame.K_w], key[pygame.K_a], key[pygame.K_d], key[pygame.K_n]]
+        elif self.commands == "socket":
+            key = self.conn.recv(1024)
+            keys = eval(key)   # eval is bad idea but it works
+            # print keys, type(keys)
+        # INPUT FROM PIPE OR SOCKET HERE
+        if keys[3] != 0:
+            simulation_array = self.__restart__(world_obj, simulation_array)
+        #
         self.screen.fill((0, 0, 0, 0))
         # apply graphic background
         # self.screen.blit(self.bg, (0, 0))
@@ -376,18 +402,23 @@ class Simulation(object):
         self.clock.tick(self.target_fps)
         #
         report_list = self.__global_report__(simulation_array)
-        report_list.append({"step": self.step_number, "flight_status": self.win})
-        # OUTPUT TO PIPE HERE
+        report_list.append({"step": self.step_number, "flight_status": self.win, "type": "system"})
+        # OUTPUT TO PIPE OR SOCKET HERE
+        if self.commands == "socket":
+            self.conn.send(str(report_list))
         # print self.win
         #
         self.step_number += 1
         self.message = ""
         #
-        if keys[3] != 0:
-            simulation_array = self.__restart__(world_obj, simulation_array)
+        # if keys[3] != 0:
+        #    simulation_array = self.__restart__(world_obj, simulation_array)
         for event in pygame.event.get():
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                 self.running = False
+                if self.commands == "socket":
+                    self.conn.close()
+                    print "Socket closed"
                 pygame.quit()
                 print "All engines stopped"
             if event.type == KEYDOWN and event.key == K_SPACE:
