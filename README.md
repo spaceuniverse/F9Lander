@@ -70,7 +70,7 @@ To control rocket through socket you should send to address the string with list
 
 For example [1, 1, 1, 0] means that all engines are working. [0, 0, 0, 1] means that you want to get new rocket and restart.
 
-As output you will get string with list of dictionaries [{}, {}, {}] with information about every object in simulation. The example of such list you can see in F9LanderClientCORE.py
+As output you will get the string with list of dictionaries [{}, {}, {}] with information about every object in simulation. The example of such list you can see in F9LanderClientCORE.py
 
 Socket address ('127.0.0.1', 50007)
 
@@ -102,11 +102,11 @@ $ python F9LanderClientCORE.py
 
 F9LanderClientCORE is a client which sends commands to server, you can modify it if you are familiar with python, or write your own script in any programming language. F9LanderClientCORE represents Python API.
 
-First start the server F9LanderCORE.py and then you can send string with list [up, left, right, new] to socket ('127.0.0.1', 50007). Up, Left, Right and New can be 1 or 0.
+First start the server F9LanderCORE.py and then you can send the string with list [up, left, right, new] to socket ('127.0.0.1', 50007). "up", "left", "right" and "new" can be 1 or 0.
 
-You can modify socket address in server code: F9LanderCORE.py line 301-303.
+You can modify socket address in the server code: F9LanderCORE.py line 301-303.
 
-As output you will get string with list of dictionaries [{}, {}, {}] with information about every object in simulation.
+As output you will get the string with list of dictionaries [{}, {}, {}] with information about every object in simulation.
 
 __To show opened sockets in Ubuntu__
 
