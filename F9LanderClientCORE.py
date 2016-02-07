@@ -17,9 +17,9 @@ sock.connect(('127.0.0.1', 50007))
 sock.send(str([0, 0, 0, 1]))
 
 while True:
+    # getting data from server
     # eval is bad idea but it works
     data = eval(sock.recv(1024))
-    #
     if not data:
         break
     # print data, type(data)
@@ -33,19 +33,39 @@ while True:
     # 'fuel': 791.9, 'type': 'actor', 'enj': True, 'wind': 32.0} {'angle': 0.01994907110929489,
     # 'px': 52.044925689697266, 'py': 4.305685997009277, 'vx': 0.8977082371711731, 'vy': 0.7780137658119202,
     # 'type': 'decoration'} {'step': 99, 'type': 'system', 'flight_status': 'none'}
-    rnd = np.random.random_sample()
-    if rnd >= 0.7:
-        rnd = 1
+    #
+    # rnd = np.random.random_sample()
+    # if rnd >= 0.7:
+    #    rnd = 1
+    # else:
+    #    rnd = 0
+    #
+    # if-then-else logic
+    if agent_state["vx"] <= -7.0:
+        e1 = 1
+        e2 = 1
+        e3 = 1
     else:
-        rnd = 0
+        e1 = 0
+        e2 = 0
+        e3 = 0
+    if agent_state["angle"] < 0.0:
+        e2 = 1
+    else:
+        e2 = 0
+    if agent_state["angle"] > 0.0:
+        e3 = 1
+    else:
+        e3 = 0
     # system_state["flight_status"] | "none", "landed", "destroyed"
     # "none" means that we don't know, whether we landed or destroyed
-    if system_state["flight_status"] == "destroyed" or (agent_state["fuel"] <= 0.0 and agent_state["dist"] >= 99.0):
+    if system_state["flight_status"] == "destroyed" or (agent_state["fuel"] <= 0.0 and agent_state["dist"] >= 70.0):
         new = 1
     else:
         new = 0
     # keys map [up, left, right, new]
-    sock.send(str([rnd, 1, 1, new]))
+    # sending command to server
+    sock.send(str([e1, e2, e3, new]))
     # time.sleep(3)
 
 sock.close()
