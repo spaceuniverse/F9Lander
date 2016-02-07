@@ -8,7 +8,7 @@ import pygame
 from pygame.locals import *
 import numpy as np
 
-# for external commands
+# for external control commands
 import socket
 
 # for delay in debug launch
@@ -31,7 +31,7 @@ class Options(object):
         self.screen_height = 768
         self.target_fps = 90   # 60
         # SOCKET, PIPE OR KEYBOARD PARAMETER HERE
-        # Socket ('127.0.0.1', 50007)
+        # socket address ('127.0.0.1', 50007)
         self.commands = "keyboard"   # "keyboard" "socket" | in future "fifo"
         #
         self.colors = {staticBody: (255, 255, 255, 255), dynamicBody: (0, 0, 255, 255)}
@@ -72,7 +72,7 @@ class Platform(object):
         self.vel_x = 0.0
         self.vel_y = 0.0
         # CreateDynamicBody CreateStaticBody
-        # b2PolygonShape(vertices= [(-1,0),(1,0),(0,2)])
+        # b2PolygonShape(vertices=[(-1,0),(1,0),(0,2)])
         self.body = world_obj.world.CreateKinematicBody(position=(self.position_x, self.position_y),
                                                         angle=self.position_angle,
                                                         # shapes=polygonShape(box=(12, 0.8)),
@@ -382,6 +382,7 @@ class Simulation(object):
                     pygame.draw.polygon(self.screen, (255, np.random.random_integers(100, 200), 0, 150),
                                         (vertices[1], vertices[0],
                                          (vertices[1][0] + np.random.random_integers(3, 7), vertices[1][1] + np.random.random_integers(11, 17))))
+        # checking status
         for entity in simulation_array:
             if entity.type == "actor":
                 if entity.live and entity.contact and entity.contact_time >= 2.75:   # why 2.25 read in obj field + 0.5
@@ -413,6 +414,7 @@ class Simulation(object):
         #
         # if keys[3] != 0:
         #    simulation_array = self.__restart__(world_obj, simulation_array)
+        # events | SPACE works even in external control modes
         for event in pygame.event.get():
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                 self.running = False

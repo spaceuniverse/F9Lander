@@ -27,17 +27,19 @@ while True:
     platform_state = (item for item in data if item["type"] == "decoration").next()
     system_state = (item for item in data if item["type"] == "system").next()
     print agent_state, platform_state, system_state
+    # output example
     # {'dist': 30.396299362182617, 'contact_time': 0, 'vx': -21.335142135620117, 'vy': 0.9811121821403503,
     # 'angle': -0.05268074572086334, 'px': 43.301612854003906, 'py': 42.239990234375, 'live': True, 'contact': False,
     # 'fuel': 791.9, 'type': 'actor', 'enj': True, 'wind': 32.0} {'angle': 0.01994907110929489,
     # 'px': 52.044925689697266, 'py': 4.305685997009277, 'vx': 0.8977082371711731, 'vy': 0.7780137658119202,
     # 'type': 'decoration'} {'step': 99, 'type': 'system', 'flight_status': 'none'}
     rnd = np.random.random_sample()
-    if rnd >= 0.9:
+    if rnd >= 0.7:
         rnd = 1
     else:
         rnd = 0
-    #
+    # system_state["flight_status"] | "none", "landed", "destroyed"
+    # "none" means that we don't know, whether we landed or destroyed
     if system_state["flight_status"] == "destroyed" or (agent_state["fuel"] <= 0.0 and agent_state["dist"] >= 99.0):
         new = 1
     else:

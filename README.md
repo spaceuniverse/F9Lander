@@ -46,13 +46,13 @@ ______________________________________________
 
 ###Controls:
 
-To change type of control fix line 35 in F9LanderCORE.py
+To change type of control - fix line 35 in F9LanderCORE.py
 
 ```bash
-self.commands = "socket"   # "keyboard" "socket"
+self.commands = "keyboard"   # "keyboard" "socket" | in future "fifo"
 ```
 
-**"keyboard"**
+__**"keyboard"**__
 
 **w** - main engine
 
@@ -60,43 +60,45 @@ self.commands = "socket"   # "keyboard" "socket"
 
 **d** - right engine
 
-**n, space** - restart game (new rocket)
+**n, space** - restart game (new rocket) | SPACE works even in external control modes
 
-**"socket"**
+For more information read help.pdf
 
-('127.0.0.1', 50007)
+__**"socket"**__
 
-Send list [1, 1, 1, 0] to socket where [up, left, right, new]
+Socket address ('127.0.0.1', 50007)
 
-1 - active
+Send list [1, 1, 1, 0] to socket, where entities means [up, left, right, new]
 
-0 - off
+1 - activate, 0 - do nothing
 
 ______________________________________________
 
 ###Information:
 
-To run in "keyboard" mode fix line 35 in F9LanderCORE.py
+__To run in "keyboard" mode - fix line 35 in F9LanderCORE.py__
+
+Run in console:
 
 ```bash
-Run in console
-
 $ python F9LanderCORE.py
 ```
 
-To run in "socket" mode fix line 35 in F9LanderCORE.py
+__To run in "socket" mode fix - line 35 in F9LanderCORE.py__
 
-```bash
 Run in first console
 
+```bash
 $ python F9LanderCORE.py
+```
 
 Then run in second console
 
+```bash
 $ python F9LanderClientCORE.py
 ```
 
-To show opened sockets in Ubuntu
+__To show opened sockets in Ubuntu__
 
 ```bash
 $ netstat -ntlp | grep LISTEN
