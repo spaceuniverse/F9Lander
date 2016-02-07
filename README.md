@@ -98,6 +98,12 @@ Then run in second console
 $ python F9LanderClientCORE.py
 ```
 
+F9LanderClientCORE is a client which sends commands to server, you can modify it or write your own script in any programming language
+
+Just start server before and send list [up, left, right, new] to socket ('127.0.0.1', 50007) | (up, left, right, new can be 1 or 0)
+
+You can modify this address in server code (F9LanderCORE line 301-303)
+
 __To show opened sockets in Ubuntu__
 
 ```bash
