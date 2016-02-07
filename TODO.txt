@@ -1,7 +1,7 @@
 ______________________________________________
 # TODO
 ______________________________________________
-- External control and reading status through named pipe (fifo) -> class()
+- External control and reading status through named pipe (fifo, socket) -> class() ***
 - AI module (maybe reinforcement learning or something else)
 ______________________________________________
 # TOTHINK

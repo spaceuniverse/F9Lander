@@ -46,7 +46,7 @@ ______________________________________________
 
 ###Controls:
 
-To change type of control - fix line 35 in F9LanderCORE.py
+You can control rocket manually through keyboard or using external script through socket. To change type of control you should choose it in line 35 in F9LanderCORE.py
 
 ```bash
 self.commands = "keyboard"   # "keyboard" "socket" | in future "fifo"
@@ -54,29 +54,29 @@ self.commands = "keyboard"   # "keyboard" "socket" | in future "fifo"
 
 __**"keyboard"**__
 
-**w** - main engine
+**w** - main engine;
 
-**a** - left engine
+**a** - left engine;
 
-**d** - right engine
+**d** - right engine;
 
-**n, space** - restart game (new rocket) | SPACE works even in external control modes
+**n, space** - restart game (new rocket) | SPACE works even in external control modes;
 
-For more information read help.pdf
+More information about control you can find in **help.pdf**
 
 __**"socket"**__
 
+To control rocket through socket you should send to address list with four numbers [up, left, right, new]. Each of this numbers can be 1 or 0, which means: 1 - activate, 0 - do nothing.
+
+For example [1, 1, 1, 0] means that all engines are working. [0, 0, 0, 1] means that you want to get new rocket and restart.
+
 Socket address ('127.0.0.1', 50007)
-
-Send list [1, 1, 1, 0] to socket, where entities means [up, left, right, new]
-
-1 - activate, 0 - do nothing
 
 ______________________________________________
 
 ###Information:
 
-__To run in "keyboard" mode - fix line 35 in F9LanderCORE.py__
+__To run in "keyboard" mode choose it in line 35 in F9LanderCORE.py__
 
 Run in console:
 
@@ -84,25 +84,25 @@ Run in console:
 $ python F9LanderCORE.py
 ```
 
-__To run in "socket" mode fix - line 35 in F9LanderCORE.py__
+__To run in "socket" mode choose it in line 35 in F9LanderCORE.py__
 
-Run in first console
+Run in first console:
 
 ```bash
 $ python F9LanderCORE.py
 ```
 
-Then run in second console
+Then run in second console:
 
 ```bash
 $ python F9LanderClientCORE.py
 ```
 
-F9LanderClientCORE is a client which sends commands to server, you can modify it or write your own script in any programming language
+F9LanderClientCORE is a client which sends commands to server, you can modify it if you are familiar with python, or write your own script in any programming language. F9LanderClientCORE represents Python API.
 
-Just start server before and send list [up, left, right, new] to socket ('127.0.0.1', 50007) | (up, left, right, new can be 1 or 0)
+First start the server F9LanderCORE.py and then you can send string with list [up, left, right, new] to socket ('127.0.0.1', 50007). Up, Left, Right and New can be 1 or 0.
 
-You can modify this address in server code (F9LanderCORE line 301-303)
+You can modify socket address in server code: F9LanderCORE line 301-303.
 
 __To show opened sockets in Ubuntu__
 
