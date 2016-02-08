@@ -86,7 +86,7 @@ class Platform(object):
                                                             (-self.width + 2.2, -self.height)],
                                                   density=0,
                                                   friction=0.3,
-                                                  restitution=0)
+                                                  restitution=0, userData="platform")
         self.live = True
         self.report()
 
@@ -139,7 +139,8 @@ class Rocket(object):
                                                       userData="actor_body")
         self.box = self.body.CreatePolygonFixture(box=(self.width, self.height),
                                                   density=1,
-                                                  friction=0.3)   # 0.3
+                                                  friction=0.3,
+                                                  userData="frame")   # 0.3
         # self.box2 = self.body.CreatePolygonFixture(box=(4, 2), density=1, friction=0.3)
         self.box2 = self.body.CreatePolygonFixture(vertices=[(-2, -self.height),
                                                              (2, -self.height),
@@ -150,6 +151,7 @@ class Rocket(object):
                                                    userData="wings")   # for naming this fixture
         self.fuel = 999.9   # 100.0
         self.consumption = 1.0   # 0.1
+        # add penalty to durability depending on the fuel balance | in order to make strategy more complex
         self.durability = 9.0   # 1.0
         #
         self.body.linearVelocity[1] = -39.0   # -30.0
@@ -175,7 +177,15 @@ class Rocket(object):
 
     def __is_alive__(self):
         self.contact = False
-        if len(self.body.contacts) > 0 and self.dist1 < 0.5:   # 0.1
+        if len(self.body.contacts) > 0 and self.dist1 < 0.5:   # 0.39
+            # real fixture contacts | not AABB as we used | more info and links in "t o d o . t x t" file
+            # print len(self.body.contacts)
+            # for b2e in self.body.contacts:
+            #    print b2e
+            #    print b2e.contact
+            #    tb2e = b2e.contact.touching
+            #    print tb2e
+            # print "============="
             self.contact = True
             self.contact_time += 0.01   # 2.5 sec * 90 iteration = 225 iteration * 0.01 = 2.25 # + 0.5 for 3 sec
             print self.contact_time
