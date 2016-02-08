@@ -177,7 +177,7 @@ class Rocket(object):
 
     def __is_alive__(self):
         self.contact = False
-        if len(self.body.contacts) > 0 and self.dist1 < 0.5:   # 0.39
+        if len(self.body.contacts) > 0 and self.dist1 < 0.39:   # prev 0.5
             # real fixture contacts | not AABB as we used | more info and links in "t o d o . t x t" file
             # print len(self.body.contacts)
             # for b2e in self.body.contacts:
