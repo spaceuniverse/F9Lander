@@ -48,11 +48,9 @@ http://www.scipy.org/scipylib/download.html
 
 n. **common sense**
 
-p.s. conda
+p.s. conda (not necessary | only if you choose conda way of packages installation)
 
-```bash
 http://conda.pydata.org/miniconda.html
-```
 
 ______________________________________________
 
