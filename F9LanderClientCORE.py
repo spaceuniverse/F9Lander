@@ -34,6 +34,36 @@ while True:
     # 'px': 52.044925689697266, 'py': 4.305685997009277, 'vx': 0.8977082371711731, 'vy': 0.7780137658119202,
     # 'type': 'decoration'} {'step': 99, 'type': 'system', 'flight_status': 'none'}
     #
+    # 'dist' - distance between two nearest points of rocket and a platform body
+    #
+    # 'contact_time' - time counter, which starts from the moment when rocket contacts with the platform
+    #                  you need to keep contact with the platform for some time, without destroying yourself, to win
+    #
+    # 'vx' | 'vy' - vertical and horizontal velocity
+    #
+    # 'angle' - angle of hade
+    #
+    # 'px' | 'py' - coordinates of the body central point
+    #
+    # 'live' - still alive? "False" if not
+    #
+    # 'contact' - is there a contact with the platform? "False" if not
+    #
+    # 'fuel' - the amount of remaining fuel
+    #
+    # 'type' - type of the object | "actor" - rocket | "decoration" - platform | "system" - world
+    #
+    # 'enj' - are the engines workable? "False" if fuel tank is empty
+    #
+    # 'wind' - wind strength
+    #
+    # 'step' - iteration counter
+    #
+    # 'flight_status' - win or loss? | "landed" or "destroyed"?
+    #                   "none" means that you don't know, whether you landed or destroyed, or maybe still flying
+    #                   "landed" means that you won
+    #
+    # random move
     # rnd = np.random.random_sample()
     # if rnd >= 0.7:
     #    rnd = 1

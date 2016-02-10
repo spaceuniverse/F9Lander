@@ -31,10 +31,28 @@ http://www.pygame.org/download.shtml
 2. **pybox2d**
 https://github.com/pybox2d/pybox2d
 
+    to install using conda:
+
+    ```bash
+    $ conda install -c https://conda.anaconda.org/kne pybox2d
+    ```
+
 3. **numpy**
 http://www.scipy.org/scipylib/download.html
 
+    to install using conda:
+
+    ```bash
+    $ conda install numpy
+    ```
+
 n. **common sense**
+
+p.s. conda
+
+```bash
+http://conda.pydata.org/miniconda.html
+```
 
 ______________________________________________
 
@@ -60,7 +78,7 @@ __**"keyboard"**__
 
 **d** - right engine;
 
-**n, space** - restart game (new rocket) | SPACE works even in external control modes;
+**n, space** - restart game (new rocket) | SPACE will work even in "socket" control mode;
 
 You can find more information about controls in **help.pdf**
 
@@ -73,6 +91,8 @@ For example [1, 1, 1, 0] means that all engines are working. [0, 0, 0, 1] means 
 As an output you will receive a string with list of dictionaries [{}, {}, {}] with information about every object in simulation. You can see an example of such list in F9LanderClientCORE.py
 
 Socket address ('127.0.0.1', 50007)
+
+Keys map [up - main engine, left - left engine, right - right engine, new - new rocket]
 
 ______________________________________________
 
