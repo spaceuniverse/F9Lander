@@ -113,7 +113,7 @@ class Platform(object):
         # return {"type": "decoration", "p_body": self.body, "angle": self.body.angle,
         #        "px": self.body.position[0], "py": self.body.position[1], "fixtures": self.body.fixtures}
         return {"type": "decoration", "angle": self.body.angle, "px": self.body.position[0],
-                "py": self.body.position[1], "vx": self.body.linearVelocity[1], "vy": self.body.linearVelocity[0]}
+                "py": self.body.position[1], "vx": self.body.linearVelocity[0], "vy": self.body.linearVelocity[1]}
 
 
 # -------------------------------------------------- #
@@ -270,7 +270,7 @@ class Rocket(object):
         #        "dist": self.dist1, "live": self.live, "enj": self.enj, "contact": self.contact, "wind": self.wind_str,
         #        "contact_time": self.contact_time}
         return {"type": "actor", "angle": self.body.angle, "fuel": self.fuel,
-                "vx": self.body.linearVelocity[1], "vy": self.body.linearVelocity[0],
+                "vx": self.body.linearVelocity[0], "vy": self.body.linearVelocity[1],
                 "px": self.body.position[0], "py": self.body.position[1], "dist": self.dist1,
                 "live": self.live, "enj": self.enj, "contact": self.contact, "wind": self.wind_str,
                 "contact_time": self.contact_time}
@@ -360,8 +360,8 @@ class Simulation(object):
                 # self.message += " | Dist: " + str(entity.dist1)
                 self.message += " | Fuel: " + str(np.round((entity.fuel * entity.enj), 1)) + " | Engines: " + str(entity.enj)\
                                 + " | Live: " + str(entity.live) + " | Contact: " + str(entity.contact)\
-                                + " | VX: " + str(np.round(entity.body.linearVelocity[1], 1))\
-                                + " | VY: " + str(np.round(entity.body.linearVelocity[0], 1))\
+                                + " | VX: " + str(np.round(entity.body.linearVelocity[0], 1))\
+                                + " | VY: " + str(np.round(entity.body.linearVelocity[1], 1))\
                                 + " | A: " + str(np.round(entity.body.angle, 1)) + " | Wind: " + str(entity.wind_str)
             elif entity.type == "decoration":
                 entity.act()

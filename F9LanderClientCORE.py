@@ -71,7 +71,7 @@ while True:
     #    rnd = 0
     #
     # if-then-else logic
-    if agent_state["vx"] <= -7.0:
+    if agent_state["vy"] <= -7.0:
         e1 = 1
         e2 = 1
         e3 = 1
