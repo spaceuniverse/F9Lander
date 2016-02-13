@@ -173,11 +173,36 @@ class Rocket(object):
         self.debug = False
         self.debug_p = (world_obj.screen_width / world_obj.pixels_per_meter / 2,
                         world_obj.screen_height / world_obj.pixels_per_meter / 2)   # center
+        #
+        # self.body.bullet = True
+        # print self.body
         self.report()
 
     def __is_alive__(self):
         self.contact = False
-        if len(self.body.contacts) > 0 and self.dist1 < 0.39:   # prev 0.5
+        # print "---------------------------------"
+        # print "contacts", len(self.body.contacts)
+        # print self.dist1, self.dist2
+        #
+        # to print fixtures collided
+        # if len(self.body.contacts) > 0:
+        #    for b2e in self.body.contacts:
+        #        tb2e = b2e.contact.touching
+        #        if tb2e:
+        #            print b2e.contact.fixtureA.userData, b2e.contact.fixtureB.userData, tb2e
+        #
+        # if len(self.body.contacts) > 0:
+        #    if np.fabs(self.body.linearVelocity[1]) > 39.0 or np.fabs(self.body.linearVelocity[0]) > 39.0:
+        #        self.live = False
+        #
+        if len(self.body.contacts) > 0 and self.dist2 < 0.39:
+            # 0.39 | when fixture actually contacts our speed ~ 0.0, so we measure it with a little distance | do not work with very fast obj
+            # supports stronger than the body | + uadd = 7.9
+            uadd = 7.9
+            # print "d", np.fabs(self.body.linearVelocity[1]), (self.durability + uadd)
+            if np.fabs(self.body.linearVelocity[1]) > (self.durability + uadd) or np.fabs(self.body.linearVelocity[0]) > (self.durability + uadd):
+                self.live = False
+        if len(self.body.contacts) > 0 and self.dist1 < 0.39:   # prev 0.5 | 0.39
             # real fixture contacts | not AABB as we used | more info and links in "t o d o . t x t" file
             # print len(self.body.contacts)
             # for b2e in self.body.contacts:
@@ -197,7 +222,7 @@ class Rocket(object):
 
     def __dist__(self):
         polygonA1 = self.box.shape
-        # polygonA2 = self.box2.shape
+        polygonA2 = self.box2.shape
         polygonATransform = self.body.transform
         polygonB = None
         polygonBTransform = None
@@ -207,10 +232,8 @@ class Rocket(object):
                 polygonBTransform = b.transform
         self.dist1 = Box2D.b2Distance(shapeA=polygonA1, shapeB=polygonB,
                                       transformA=polygonATransform, transformB=polygonBTransform).distance
-        # dist2 = Box2D.b2Distance(shapeA=polygonA2,
-        #                        shapeB=polygonB,
-        #                         transformA=polygonATransform,
-        #                         transformB=polygonBTransform).distance
+        self.dist2 = Box2D.b2Distance(shapeA=polygonA2, shapeB=polygonB,
+                                      transformA=polygonATransform, transformB=polygonBTransform).distance
 
     def act(self, keys=[0, 0, 0, 0]):
         if keys[0] != 0:
@@ -271,7 +294,7 @@ class Rocket(object):
         #        "contact_time": self.contact_time}
         return {"type": "actor", "angle": self.body.angle, "fuel": self.fuel,
                 "vx": self.body.linearVelocity[0], "vy": self.body.linearVelocity[1],
-                "px": self.body.position[0], "py": self.body.position[1], "dist": self.dist1,
+                "px": self.body.position[0], "py": self.body.position[1], "dist": np.amin([self.dist1, self.dist2]),
                 "live": self.live, "enj": self.enj, "contact": self.contact, "wind": self.wind_str,
                 "contact_time": self.contact_time}
 
@@ -357,9 +380,10 @@ class Simulation(object):
                 entity.act(keys=keys)
                 # self position
                 # self.message += str(entity.body.position)
-                # self.message += " | Dist: " + str(entity.dist1)
-                self.message += " | Fuel: " + str(np.round((entity.fuel * entity.enj), 1)) + " | Engines: " + str(entity.enj)\
-                                + " | Live: " + str(entity.live) + " | Contact: " + str(entity.contact)\
+                self.message += "| Dist: " + str(np.round(np.amin([entity.dist1, entity.dist2]), 1))   # \
+                #                + " " + str(np.round(entity.dist1, 1)) + " " + str(np.round(entity.dist2, 1))
+                self.message += " | Fuel: " + str(np.round((entity.fuel * entity.enj), 1)) + " | Eng: " + str(entity.enj)\
+                                + " | Live: " + str(entity.live) + " | Cnt: " + str(entity.contact)\
                                 + " | VX: " + str(np.round(entity.body.linearVelocity[0], 1))\
                                 + " | VY: " + str(np.round(entity.body.linearVelocity[1], 1))\
                                 + " | A: " + str(np.round(entity.body.angle, 1)) + " | Wind: " + str(entity.wind_str)

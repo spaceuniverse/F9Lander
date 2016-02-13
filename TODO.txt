@@ -10,7 +10,7 @@ ______________________________________________
 - Think about new rocket engine design (angle + power | 2 bodies, force to second + rotation | joint)
 - More realistic design (look real sizes etc.)
 - Think about waiting 3-5 sec before green light ***
-- Add dist to wings (to fix the bug when all velocity stops by wing, and landing is ok) (min(dist1, dist2))
+- Add dist to wings (to fix the bug when all velocity stops by wing, and landing is ok) (min(dist1, dist2)) ***
 - Add in main class field self.win and report it ***
 - http://stackoverflow.com/questions/13524039/friction-between-moving-static-body-and-dynamic-body -> no friction bug ***
 - #
@@ -22,7 +22,21 @@ ______________________________________________
 - #
 - Add penalty to durability depending on the fuel balance
 - Sprites, graphics
+- Left engn <-> Right engn
 ______________________________________________
 *** done | done and need to test
 ______________________________________________
-
+# LOG
+-------------
+contacts 0
+-------------
+contacts 2
+-------------
+contacts 2
+70.808883667 16.9
+-------------
+contacts 2
+1 wings 2 platform True
+1.04428935051 16.9
+-------------
+______________________________________________
