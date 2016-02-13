@@ -34,6 +34,8 @@ class Options(object):
         # socket address ('127.0.0.1', 50007)
         self.commands = "keyboard"   # "keyboard" "socket" | in future "fifo"
         #
+        self.address = ('127.0.0.1', 50007)
+        #
         self.colors = {staticBody: (255, 255, 255, 255), dynamicBody: (0, 0, 255, 255)}
 
 
@@ -311,6 +313,7 @@ class Simulation(object):
         self.colors = options.colors
         #
         self.commands = options.commands
+        self.address = options.address
         #
         pygame.init()
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height), 0, 32)
@@ -332,7 +335,7 @@ class Simulation(object):
         #
         if self.commands == "socket":
             self.sock = socket.socket()
-            self.sock.bind(('127.0.0.1', 50007))
+            self.sock.bind(self.address)
             self.sock.listen(1)
             print "Waiting for client"
             self.conn, self.addr = self.sock.accept()
