@@ -171,6 +171,13 @@ class Rocket(object):
         self.dist1 = 999.0   # placeholder for 1 fixture
         self.dist2 = 999.0   # placeholder for 2 fixture
         self.contact_time = 0
+        # for using box2d contacts instead of measure dist < 0.00001
+        self.frame_c = False
+        self.wings_c = False
+        #
+        # previous v storage
+        self.bvx = self.body.linearVelocity[0]
+        self.bvy = self.body.linearVelocity[1]
         #
         self.debug = False
         self.debug_p = (world_obj.screen_width / world_obj.pixels_per_meter / 2,
@@ -180,47 +187,67 @@ class Rocket(object):
         # print self.body
         self.report()
 
+    def __debug_prints__(self, comment=" "):
+        print "\n", "---------------------> " + comment
+        print "_contacts_number_", len(self.body.contacts)
+        print "_distance_", self.dist1, self.dist2
+        print "-------"
+        print "_current_velocity_y_x_", self.body.linearVelocity[1], self.body.linearVelocity[0]
+        print "-------"
+        print "_previous_velocity_y_x_", self.bvy, self.bvx
+        print "-------"
+        print "_velocity_gap_", np.fabs(np.fabs(self.body.linearVelocity[1]) - np.fabs(self.bvy)), np.fabs(np.fabs(self.body.linearVelocity[0]) - np.fabs(self.bvx)), self.durability
+        print "-------"
+
     def __is_alive__(self):
         self.contact = False
-        # print "---------------------------------"
-        # print "contacts", len(self.body.contacts)
-        # print self.dist1, self.dist2
         #
-        # to print fixtures collided
-        # if len(self.body.contacts) > 0:
-        #    for b2e in self.body.contacts:
-        #        tb2e = b2e.contact.touching
-        #        if tb2e:
-        #            print b2e.contact.fixtureA.userData, b2e.contact.fixtureB.userData, tb2e
+        self.frame_c = False
+        self.wings_c = False
         #
-        # if len(self.body.contacts) > 0:
-        #    if np.fabs(self.body.linearVelocity[1]) > 39.0 or np.fabs(self.body.linearVelocity[0]) > 39.0:
-        #        self.live = False
+        # self.__debug_prints__("_start_")
         #
-        if len(self.body.contacts) > 0 and self.dist2 < 0.39:
-            # 0.39 | when fixture actually contacts our speed ~ 0.0, so we measure it with a little distance | do not work with very fast obj
-            # supports stronger than the body | + uadd = 7.9
-            uadd = 7.9
-            # print "d", np.fabs(self.body.linearVelocity[1]), (self.durability + uadd)
-            if np.fabs(self.body.linearVelocity[1]) > (self.durability + uadd) or np.fabs(self.body.linearVelocity[0]) > (self.durability + uadd):
+        # collided fixtures
+        if len(self.body.contacts) > 0:
+            for b2e in self.body.contacts:
+                tb2e = b2e.contact.touching
+                if tb2e:
+                    # print b2e.contact.fixtureA.userData, b2e.contact.fixtureB.userData, tb2e
+                    if b2e.contact.fixtureA.userData == "frame":
+                        self.frame_c = True
+                    if b2e.contact.fixtureA.userData == "wings":
+                        self.wings_c = True
+        # print "_part_c_", self.frame_c, self.wings_c
+        #
+        if len(self.body.contacts) > 0 and self.wings_c:
+            # supports are stronger than the body | + uadd | 7.9
+            uadd = 3.9
+            #
+            # self.__debug_prints__("_wings_")
+            #
+            if np.fabs(np.fabs(self.body.linearVelocity[1]) - np.fabs(self.bvy)) > (self.durability + uadd) or np.fabs(np.fabs(self.body.linearVelocity[0]) - np.fabs(self.bvx)) > (self.durability + uadd):
                 self.live = False
-        if len(self.body.contacts) > 0 and self.dist1 < 0.39:   # prev 0.5 | 0.39
+        if len(self.body.contacts) > 0 and (self.frame_c or self.dist1 < 0.021):   # 0.5 | 0.39 | 0.021 meter - 21 mm
             # real fixture contacts | not AABB as we used | more info and links in "t o d o . t x t" file
-            # print len(self.body.contacts)
             # for b2e in self.body.contacts:
             #    print b2e
             #    print b2e.contact
             #    tb2e = b2e.contact.touching
             #    print tb2e
-            # print "============="
             self.contact = True
             self.contact_time += 0.01   # 2.5 sec * 90 iteration = 225 iteration * 0.01 = 2.25 # + 0.5 for 3 sec
             print self.contact_time
-            # print self.body.contacts
-            if np.fabs(self.body.linearVelocity[1]) > self.durability or np.fabs(self.body.linearVelocity[0]) > self.durability:
+            #
+            if np.fabs(np.fabs(self.body.linearVelocity[1]) - np.fabs(self.bvy)) > self.durability or np.fabs(np.fabs(self.body.linearVelocity[0]) - np.fabs(self.bvx)) > self.durability:
+                #
+                # self.__debug_prints__("_frame_")
+                #
                 self.live = False
         else:
             self.contact_time = 0
+        # previous v
+        self.bvx = self.body.linearVelocity[0]
+        self.bvy = self.body.linearVelocity[1]
 
     def __dist__(self):
         polygonA1 = self.box.shape
