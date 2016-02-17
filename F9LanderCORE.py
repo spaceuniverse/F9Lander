@@ -449,7 +449,7 @@ class Simulation(object):
         # checking status
         for entity in simulation_array:
             if entity.type == "actor":
-                if entity.live and entity.contact and entity.contact_time >= 2.75:   # why 2.25 read in obj field + 0.5
+                if entity.live and entity.contact and entity.contact_time >= 2.75 and -0.29 < entity.body.angle < 0.29:   # why 2.25 read in obj field + 0.5
                     entity.color = (0, 255, 0, 255)
                     self.win = "landed"
                     # entity.wind = False   # stops wind for this obj

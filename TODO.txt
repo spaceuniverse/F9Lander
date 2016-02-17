@@ -18,7 +18,7 @@ ______________________________________________
 - http://www.iforce2d.net/b2dtut/collision-anatomy
 - http://www.iforce2d.net/b2dtut/collision-callbacks
 - http://pybox2d.googlecode.com/svn/doc/doxygen/html_output/functions_0x69.html
-- Use real fixture contacts, not AABB as we used | hack =(
+- Use real fixture contacts, not AABB as we used | hack =( ***
 - #
 - Add penalty to durability depending on the fuel balance
 - Sprites, graphics
