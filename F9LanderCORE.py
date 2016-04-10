@@ -7,6 +7,7 @@
 import pygame
 from pygame.locals import *
 import numpy as np
+import argparse
 
 # for external control commands
 import socket
@@ -25,17 +26,15 @@ from Box2D.b2 import *
 
 
 class Options(object):
-    def __init__(self):
+    def __init__(self, mode, ip, port):
         self.pixels_per_meter = 10
         self.screen_width = 1024
         self.screen_height = 768
         self.target_fps = 90   # 60
         # SOCKET, PIPE OR KEYBOARD PARAMETER HERE
         # socket address ('127.0.0.1', 50007)
-        self.commands = "keyboard"   # "keyboard" "socket" | in future "fifo"
-        #
-        self.address = ('127.0.0.1', 50007)
-        #
+        self.commands = "socket" if mode else "keyboard"
+        self.address = (ip, port)
         self.colors = {staticBody: (255, 255, 255, 255), dynamicBody: (0, 0, 255, 255)}
 
 
@@ -196,7 +195,8 @@ class Rocket(object):
         print "-------"
         print "_previous_velocity_y_x_", self.bvy, self.bvx
         print "-------"
-        print "_velocity_gap_", np.fabs(np.fabs(self.body.linearVelocity[1]) - np.fabs(self.bvy)), np.fabs(np.fabs(self.body.linearVelocity[0]) - np.fabs(self.bvx)), self.durability
+        print "_velocity_gap_", np.fabs(np.fabs(self.body.linearVelocity[1]) - np.fabs(self.bvy)), \
+                np.fabs(np.fabs(self.body.linearVelocity[0]) - np.fabs(self.bvx)), self.durability
         print "-------"
 
     def __is_alive__(self):
@@ -225,7 +225,8 @@ class Rocket(object):
             #
             # self.__debug_prints__("_wings_")
             #
-            if np.fabs(np.fabs(self.body.linearVelocity[1]) - np.fabs(self.bvy)) > (self.durability + uadd) or np.fabs(np.fabs(self.body.linearVelocity[0]) - np.fabs(self.bvx)) > (self.durability + uadd):
+            if np.fabs(np.fabs(self.body.linearVelocity[1]) - np.fabs(self.bvy)) > (self.durability + uadd) or \
+                    np.fabs(np.fabs(self.body.linearVelocity[0]) - np.fabs(self.bvx)) > (self.durability + uadd):
                 self.live = False
         if len(self.body.contacts) > 0 and (self.frame_c or self.dist1 < 0.021):   # 0.5 | 0.39 | 0.021 meter - 21 mm
             # real fixture contacts | not AABB as we used | more info and links in "t o d o . t x t" file
@@ -238,7 +239,8 @@ class Rocket(object):
             self.contact_time += 0.01   # 2.5 sec * 90 iteration = 225 iteration * 0.01 = 2.25 # + 0.5 for 3 sec
             print self.contact_time
             #
-            if np.fabs(np.fabs(self.body.linearVelocity[1]) - np.fabs(self.bvy)) > self.durability or np.fabs(np.fabs(self.body.linearVelocity[0]) - np.fabs(self.bvx)) > self.durability:
+            if np.fabs(np.fabs(self.body.linearVelocity[1]) - np.fabs(self.bvy)) > self.durability or \
+                    np.fabs(np.fabs(self.body.linearVelocity[0]) - np.fabs(self.bvx)) > self.durability:
                 #
                 # self.__debug_prints__("_frame_")
                 #
@@ -497,22 +499,26 @@ class Simulation(object):
 # example
 # -------------------------------------------------- #
 
-options = Options()
+def main():
+    # Command line options
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-s", "--socket", action="store_true", help="Run game in socket mode")
+    parser.add_argument("-i", "--ip", type=str, default='127.0.0.1', help="IP address for socket mode")
+    parser.add_argument("-p", "--port", type=int, default=50007, help="Port")
 
-world = World(options)
+    args = parser.parse_args()
+    options = Options(args.socket, args.ip, args.port)
+    world = World(options)
+    simulation = Simulation(options)
+    entities = [Rocket(world), Platform(world)]
 
-simulation = Simulation(options)
+    while simulation.running:
+        report = simulation.step(world, entities)
+        # print report
+        # time.sleep(1.0)
 
-entities = [Rocket(world), Platform(world)]
-
-print entities
-
-while simulation.running:
-    report = simulation.step(world, entities)
-    # print report
-    # time.sleep(1.0)
-
-print entities
+if __name__ == "__main__":
+    main()
 
 # -------------------------------------------------- #
 # --------------- you have landed ------------------ #

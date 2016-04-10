@@ -62,13 +62,9 @@ ______________________________________________
 
 ###Controls:
 
-You can control rocket manually through keyboard or using external script through socket. To change type of control you should choose it in line 35 in F9LanderCORE.py
+You can control rocket manually through keyboard or using external script through socket.
 
-```bash
-self.commands = "keyboard"   # "keyboard" "socket" | in future "fifo"
-```
-
-__**"keyboard"**__
+####Keyboard mode
 
 **w** - main engine;
 
@@ -80,36 +76,18 @@ __**"keyboard"**__
 
 You can find more information about controls in **help.pdf**
 
-__**"socket"**__
+####Socket mode
 
-To control rocket through socket you should send the string with list of four numbers [up, left, right, new] to the socket address. Each of the numbers can be 1 or 0, which means: 1 - activate, 0 - do nothing.
-
-For example [1, 1, 1, 0] means that all engines are working. [0, 0, 0, 1] means that you want to get a new rocket and restart.
-
-As an output you will receive a string with list of dictionaries [{}, {}, {}] with information about every object in simulation. You can see an example of such list in F9LanderClientCORE.py
-
-Socket address ('127.0.0.1', 50007)
-
-Keys map [up - main engine, left - left engine, right - right engine, new - new rocket]
+The `F9GameClient` class is a simple wraper to help you control rocket through the socket. See `F9utils.py` for more details.
 
 ______________________________________________
 
-###Information:
+###Command line options:
 
-__To run in "keyboard" mode choose it in line 35 in F9LanderCORE.py__
-
-Run in console:
+By default the game will run in "keyboard" mode. To run it in the "socket" mode start the server script with the following options:
 
 ```bash
-$ python F9LanderCORE.py
-```
-
-__To run in "socket" mode choose it in line 35 in F9LanderCORE.py__
-
-Run in first console:
-
-```bash
-$ python F9LanderCORE.py
+$ python F9LanderCORE.py -s
 ```
 
 Then run in second console:
@@ -118,35 +96,24 @@ Then run in second console:
 $ python F9LanderClientCORE.py
 ```
 
-F9LanderClientCORE is a client which sends commands to the server, you can modify it if you are familiar with python, or write your own script in any programming language. F9LanderClientCORE represents Python API.
+`F9LanderClientCORE.py` is a client which sends commands to the server, you can modify it if you are familiar with python. It represents the Python API.
 
-First start the server F9LanderCORE.py and then you can send the string with list [up, left, right, new] to socket ('127.0.0.1', 50007). "up", "left", "right" and "new" can be 1 or 0.
-
-You can modify socket address in the server code F9LanderCORE.py. Find 37 line and change it.
+You can modify the socket address and port by running the server with the following options:
 
 ```bash
-self.address = ('127.0.0.1', 50007)
+$ python F9LanderCORE.py -i 127.0.0.1 -p 50007
 ```
-
-As an output you will get a string with the list of dictionaries [{}, {}, {}] with information about every object in simulation.
-
-__To show opened sockets in Ubuntu__
-
-```bash
-$ netstat -ntlp | grep LISTEN
-```
-
 ______________________________________________
 
 ###Files:
 
-F9LanderCORE.py - main class | server |
+`F9LanderCORE.py` - main class | server |
 
-F9LanderClientCORE.py - external control script | client | Python API |
+`F9LanderClientCORE.py` - external control script | client | Python API |
 
-./experiments - folder with experimental scripts
+`./experiments` - folder with experimental scripts
 
-./res - folder with resources
+`./res` - folder with resources
 
 **^_^**
 ______________________________________________
