@@ -132,6 +132,14 @@ $ python F9LanderCORE.py -i 127.0.0.1 -p 50007
 
 As an output you will get a string with the list of dictionaries [{}, {}, {}] with information about every object in simulation.
 
+You can run game without graphics with text output only (graphics is enabled by default):
+
+```bash
+$ python F9LanderCORE.py -d
+```
+
+Note that in this mode you can't control agent using keyboard.
+
 ______________________________________________
 
 ###Information:

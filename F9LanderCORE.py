@@ -26,7 +26,7 @@ from Box2D.b2 import *
 
 
 class Options(object):
-    def __init__(self, mode, ip, port):
+    def __init__(self, mode, ip, port, display):
         self.pixels_per_meter = 10
         self.screen_width = 1024
         self.screen_height = 768
@@ -36,6 +36,8 @@ class Options(object):
         self.commands = "socket" if mode else "keyboard"   # "keyboard" "socket" | in future "fifo" and "rest"
         #
         self.address = (ip, port)
+        #
+        self.display = False if display else True
         #
         self.colors = {staticBody: (255, 255, 255, 255), dynamicBody: (0, 0, 255, 255)}
 
@@ -346,12 +348,15 @@ class Simulation(object):
         self.commands = options.commands
         self.address = options.address
         #
-        pygame.init()
-        self.screen = pygame.display.set_mode((self.screen_width, self.screen_height), 0, 32)
-        pygame.display.set_caption("_F9_Lander_")
-        self.clock = pygame.time.Clock()
+        self.display = options.display
         #
-        self.myfont = pygame.font.SysFont(None, 29)
+        if self.display:
+            pygame.init()
+            self.screen = pygame.display.set_mode((self.screen_width, self.screen_height), 0, 32)
+            pygame.display.set_caption("_F9_Lander_")
+            self.clock = pygame.time.Clock()
+            #
+            self.myfont = pygame.font.SysFont(None, 29)
         # self.bg = pygame.transform.scale(pygame.image.load("canvas.png"), (self.screen_width, self.screen_height))
         #
         self.running = True
@@ -394,8 +399,9 @@ class Simulation(object):
         keys = [0, 0, 0, 0]
         # keys map [up, left, right, new]
         if self.commands == "keyboard":
-            key = pygame.key.get_pressed()
-            keys = [key[pygame.K_w], key[pygame.K_a], key[pygame.K_d], key[pygame.K_n]]
+            if self.display:
+                key = pygame.key.get_pressed()
+                keys = [key[pygame.K_w], key[pygame.K_a], key[pygame.K_d], key[pygame.K_n]]
         elif self.commands == "socket":
             key = self.conn.recv(1024)
             keys = eval(key)   # eval is bad idea but it works
@@ -404,7 +410,8 @@ class Simulation(object):
         if keys[3] != 0:
             simulation_array = self.__restart__(world_obj, simulation_array)
         #
-        self.screen.fill((0, 0, 0, 0))
+        if self.display:
+            self.screen.fill((0, 0, 0, 0))
         # apply graphic background
         # self.screen.blit(self.bg, (0, 0))
         # drawing
@@ -430,26 +437,27 @@ class Simulation(object):
                 vertices = [(entity.body.transform * v) * self.pixels_per_meter for v in shape.vertices]
                 vertices = [(v[0], self.screen_height - v[1]) for v in vertices]
                 # self.colors[entity.body.type]
-                pygame.draw.polygon(self.screen, entity.color, vertices)
-                # debug
-                if False:
-                    for vert in vertices:
-                        pygame.draw.circle(self.screen, (255, 255, 0, 255), (int(vert[0]), int(vert[1])), 3, 0)
-                    if entity.type == "actor":
-                        pygame.draw.circle(self.screen, (0, 255, 0, 255), (int(entity.debug_p[0]) * 10, self.screen_height - int(entity.debug_p[1]) * 10), 3, 0)
-                # engines
-                if keys[0] != 0 and entity.type == "actor" and entity.enj and fixture.userData != "wings":
-                    pygame.draw.polygon(self.screen, (255, np.random.random_integers(100, 200), 0, 150),
-                                        (vertices[1], vertices[0],
-                                         ((vertices[0][0] + vertices[1][0]) / 2, vertices[0][1] + np.random.random_integers(21, 27))))
-                if keys[1] != 0 and entity.type == "actor" and entity.enj and fixture.userData != "wings":
-                    pygame.draw.polygon(self.screen, (255, np.random.random_integers(100, 200), 0, 150),
-                                        (vertices[1], vertices[0],
-                                         (vertices[0][0] - np.random.random_integers(3, 7), vertices[0][1] + np.random.random_integers(11, 17))))
-                if keys[2] != 0 and entity.type == "actor" and entity.enj and fixture.userData != "wings":
-                    pygame.draw.polygon(self.screen, (255, np.random.random_integers(100, 200), 0, 150),
-                                        (vertices[1], vertices[0],
-                                         (vertices[1][0] + np.random.random_integers(3, 7), vertices[1][1] + np.random.random_integers(11, 17))))
+                if self.display:
+                    pygame.draw.polygon(self.screen, entity.color, vertices)
+                    # debug
+                    if False:
+                        for vert in vertices:
+                            pygame.draw.circle(self.screen, (255, 255, 0, 255), (int(vert[0]), int(vert[1])), 3, 0)
+                        if entity.type == "actor":
+                            pygame.draw.circle(self.screen, (0, 255, 0, 255), (int(entity.debug_p[0]) * 10, self.screen_height - int(entity.debug_p[1]) * 10), 3, 0)
+                    # engines
+                    if keys[0] != 0 and entity.type == "actor" and entity.enj and fixture.userData != "wings":
+                        pygame.draw.polygon(self.screen, (255, np.random.random_integers(100, 200), 0, 150),
+                                            (vertices[1], vertices[0],
+                                             ((vertices[0][0] + vertices[1][0]) / 2, vertices[0][1] + np.random.random_integers(21, 27))))
+                    if keys[1] != 0 and entity.type == "actor" and entity.enj and fixture.userData != "wings":
+                        pygame.draw.polygon(self.screen, (255, np.random.random_integers(100, 200), 0, 150),
+                                            (vertices[1], vertices[0],
+                                             (vertices[0][0] - np.random.random_integers(3, 7), vertices[0][1] + np.random.random_integers(11, 17))))
+                    if keys[2] != 0 and entity.type == "actor" and entity.enj and fixture.userData != "wings":
+                        pygame.draw.polygon(self.screen, (255, np.random.random_integers(100, 200), 0, 150),
+                                            (vertices[1], vertices[0],
+                                             (vertices[1][0] + np.random.random_integers(3, 7), vertices[1][1] + np.random.random_integers(11, 17))))
         # checking status
         for entity in simulation_array:
             if entity.type == "actor":
@@ -465,10 +473,11 @@ class Simulation(object):
         world_obj.world.ClearForces()   # but why?
         #
         self.message += " | Step: " + str(self.step_number)
-        self.label = self.myfont.render(self.message, True, (255, 255, 255), (0, 0, 0))
-        self.screen.blit(self.label, (10, 10))
-        pygame.display.flip()
-        self.clock.tick(self.target_fps)
+        if self.display:
+            self.label = self.myfont.render(self.message, True, (255, 255, 255), (0, 0, 0))
+            self.screen.blit(self.label, (10, 10))
+            pygame.display.flip()
+            self.clock.tick(self.target_fps)
         #
         report_list = self.__global_report__(simulation_array)
         report_list.append({"step": self.step_number, "flight_status": self.win, "type": "system"})
@@ -483,18 +492,19 @@ class Simulation(object):
         # if keys[3] != 0:
         #    simulation_array = self.__restart__(world_obj, simulation_array)
         # events | SPACE works even in external control modes
-        for event in pygame.event.get():
-            if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
-                self.running = False
-                if self.commands == "socket":
-                    self.conn.close()
-                    print "Socket closed"
-                pygame.quit()
-                print "All engines stopped"
-            if event.type == KEYDOWN and event.key == K_SPACE:
-                simulation_array = self.__restart__(world_obj, simulation_array)
-                print "A: Bodies, objects", len(world_obj.world.bodies), len(simulation_array)
-                # here was code from __restart__()
+        if self.display:
+            for event in pygame.event.get():
+                if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+                    self.running = False
+                    if self.commands == "socket":
+                        self.conn.close()
+                        print "Socket closed"
+                    pygame.quit()
+                    print "All engines stopped"
+                if event.type == KEYDOWN and event.key == K_SPACE:
+                    simulation_array = self.__restart__(world_obj, simulation_array)
+                    print "A: Bodies, objects", len(world_obj.world.bodies), len(simulation_array)
+                    # here was code from __restart__()
         return report_list
 
 # -------------------------------------------------- #
@@ -508,10 +518,11 @@ def main():
     parser.add_argument("-s", "--socket", action="store_true", help="Run game in socket mode")
     parser.add_argument("-i", "--ip", type=str, default='127.0.0.1', help="IP address for socket mode")
     parser.add_argument("-p", "--port", type=int, default=50007, help="Port")
+    parser.add_argument("-d", "--display", action="store_true", help="Run without graphics. Text output only.")
     #
     args = parser.parse_args()
     #
-    options = Options(args.socket, args.ip, args.port)
+    options = Options(args.socket, args.ip, args.port, args.display)
     world = World(options)
     simulation = Simulation(options)
     entities = [Rocket(world), Platform(world)]
@@ -526,6 +537,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 # -------------------------------------------------- #
 # --------------- you have landed ------------------ #
