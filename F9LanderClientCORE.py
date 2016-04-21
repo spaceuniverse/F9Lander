@@ -4,6 +4,7 @@
 # -------------------------------------------------- #
 
 import numpy as np
+
 from F9utils import F9GameClient
 from F9utils import RLAgent
 
@@ -11,6 +12,8 @@ from F9utils import RLAgent
 import time
 
 # -------------------------------------------------- #
+
+
 class SimpleAgent(RLAgent):
     def __init__(self, client):
         self.client = client
@@ -76,6 +79,9 @@ class SimpleAgent(RLAgent):
         # Do nothing
         pass
 
+# -------------------------------------------------- #
+
+
 def solve():
     # Setup agent
     client = F9GameClient()
@@ -100,6 +106,7 @@ def solve():
 
 if __name__ == "__main__":
     solve()
+
 # -------------------------------------------------- #
 # --------------- you have landed ------------------ #
 # -------------------------------------------------- #

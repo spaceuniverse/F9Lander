@@ -22,7 +22,7 @@ import Box2D
 from Box2D.b2 import *
 
 # -------------------------------------------------- #
-# drawing options
+# drawing and mode options
 
 
 class Options(object):
@@ -33,8 +33,10 @@ class Options(object):
         self.target_fps = 90   # 60
         # SOCKET, PIPE OR KEYBOARD PARAMETER HERE
         # socket address ('127.0.0.1', 50007)
-        self.commands = "socket" if mode else "keyboard"
+        self.commands = "socket" if mode else "keyboard"   # "keyboard" "socket" | in future "fifo" and "rest"
+        #
         self.address = (ip, port)
+        #
         self.colors = {staticBody: (255, 255, 255, 255), dynamicBody: (0, 0, 255, 255)}
 
 
@@ -196,7 +198,7 @@ class Rocket(object):
         print "_previous_velocity_y_x_", self.bvy, self.bvx
         print "-------"
         print "_velocity_gap_", np.fabs(np.fabs(self.body.linearVelocity[1]) - np.fabs(self.bvy)), \
-                np.fabs(np.fabs(self.body.linearVelocity[0]) - np.fabs(self.bvx)), self.durability
+            np.fabs(np.fabs(self.body.linearVelocity[0]) - np.fabs(self.bvx)), self.durability
         print "-------"
 
     def __is_alive__(self):
@@ -350,7 +352,7 @@ class Simulation(object):
         self.clock = pygame.time.Clock()
         #
         self.myfont = pygame.font.SysFont(None, 29)
-        self.bg = pygame.transform.scale(pygame.image.load("canvas.png"), (self.screen_width, self.screen_height))
+        # self.bg = pygame.transform.scale(pygame.image.load("canvas.png"), (self.screen_width, self.screen_height))
         #
         self.running = True
         #
@@ -499,23 +501,28 @@ class Simulation(object):
 # example
 # -------------------------------------------------- #
 
+
 def main():
     # Command line options
     parser = argparse.ArgumentParser()
     parser.add_argument("-s", "--socket", action="store_true", help="Run game in socket mode")
     parser.add_argument("-i", "--ip", type=str, default='127.0.0.1', help="IP address for socket mode")
     parser.add_argument("-p", "--port", type=int, default=50007, help="Port")
-
+    #
     args = parser.parse_args()
+    #
     options = Options(args.socket, args.ip, args.port)
     world = World(options)
     simulation = Simulation(options)
     entities = [Rocket(world), Platform(world)]
-
+    #
+    print entities
+    #
     while simulation.running:
         report = simulation.step(world, entities)
         # print report
         # time.sleep(1.0)
+    print entities
 
 if __name__ == "__main__":
     main()

@@ -1,14 +1,25 @@
+# -------------------------------------------------- #
+# --------------------_F9_Lander_------------------- #
+# ----------------------WRAPPER--------------------- #
+# -------------------------------------------------- #
+# imports
+
 import socket
 import cPickle as pickle
 import glob
 import os
 
+# -------------------------------------------------- #
+
 RESET_CMD = str([0, 0, 0, 1])
 DEFAULT_IP = '127.0.0.1'
 DEFAULT_PORT = 50007
 
+# -------------------------------------------------- #
+
+
 class F9GameClient:
-    """Game wraper"""
+    """Game wrapper"""
     def __init__(self, ip=DEFAULT_IP, port=DEFAULT_PORT):
         self.socket = socket.socket()
         self.socket.connect((ip, port))
@@ -69,6 +80,9 @@ class F9GameClient:
         else:
             print "Invalid Action"
 
+# -------------------------------------------------- #
+
+
 class RLAgent:
     """Abstract class: an RLAgent performs reinforcement learning.
     The game client will call getAction() to get an action, perform the action, and
@@ -78,6 +92,9 @@ class RLAgent:
 
     def provideFeedback(self, state, action, reward, new_state):
         raise NotImplementedError("Override me")
+
+# -------------------------------------------------- #
+
 
 class Snapshot:
     def __init__(self, prefix):
@@ -100,3 +117,8 @@ class Snapshot:
             f.close()
 
         return state
+
+
+# -------------------------------------------------- #
+# -------------------------------------------------- #
+# -------------------------------------------------- #
