@@ -5,12 +5,13 @@
 
 import numpy as np
 from F9utils import F9GameClient
+from F9utils import RLAgent
 
 # for delay in debug launch
 import time
 
 # -------------------------------------------------- #
-class SimpleAgent:
+class SimpleAgent(RLAgent):
     def __init__(self, client):
         self.client = client
 
@@ -71,6 +72,10 @@ class SimpleAgent:
 
         return action
 
+    def provideFeedback(self, state, action, reward, new_state):
+        # Do nothing
+        pass
+
 def solve():
     # Setup agent
     client = F9GameClient()
@@ -78,10 +83,11 @@ def solve():
     state = client.curState  # Observe current state
 
     while True:
-        action = ai.getAction(state)          # Decide what to do
-        client.doAction(action)               # Act
-        new_state = client.curState           # Observe new state
-        reward = client.getReward(new_state)  # Observe reward
+        action = ai.getAction(state)                            # Decide what to do
+        client.doAction(action)                                 # Act
+        new_state = client.curState                             # Observe new state
+        reward = client.getReward(new_state)                    # Observe reward
+        ai.provideFeedback(state, action, reward, new_state)    # Provide feeback to the agent
 
         agent, platform, system = new_state
         print "Agent state %s\n Platform state %s\n System state %s\n Reward %s\n" % (agent, platform, system, reward)
