@@ -1,6 +1,6 @@
 # -------------------------------------------------- #
 # --------------------_F9_Lander_------------------- #
-# ----------------------SERVER---------------------- #
+# --------------------REST_SERVER------------------- #
 # -------------------------------------------------- #
 # rest
 from flask import Flask
@@ -398,7 +398,7 @@ class Simulation(object):
             report_list.append(entity.report())
         return report_list
 
-    def step(self, world_obj, simulation_array=[], command="0000"):
+    def step(self, world_obj, simulation_array=[], command="9999"):   # "9999" is a placeholder
         keys = [0, 0, 0, 0]
         print command
         # keys map [up, left, right, new]
@@ -410,7 +410,7 @@ class Simulation(object):
             key = self.conn.recv(1024)
             keys = eval(key)   # eval is bad idea but it works
             # print keys, type(keys)
-        if command != "0000":
+        if command != "9999":
             keys = [int(command[0]), int(command[1]), int(command[2]), int(command[3])]
         print keys
         # INPUT FROM PIPE OR SOCKET HERE

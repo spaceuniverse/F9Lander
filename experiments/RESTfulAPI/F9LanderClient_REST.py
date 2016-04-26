@@ -16,6 +16,7 @@ answer = urllib.urlopen(url).read()
 
 while True:
     # time.sleep(1.0)
+    #
     answer = answer.replace("true", "True")
     answer = answer.replace("false", "False")
     data = eval(answer)
@@ -95,7 +96,6 @@ while True:
     # sending command to server
     url = "http://localhost:5000/" + str(e1) + str(e2) + str(e3) + str(new)
     answer = urllib.urlopen(url).read()
-
 
 # -------------------------------------------------- #
 # --------------- you have landed ------------------ #
