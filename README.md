@@ -58,6 +58,8 @@ ______________________________________________
 
 https://youtu.be/wCqZF0uTbKY
 
+Video is pretty old. Current version works much better (=
+
 ______________________________________________
 
 ###Controls:
@@ -78,7 +80,7 @@ __**"keyboard"**__
 
 **n, space** - restart game (new rocket) | SPACE will work even in "socket" control mode;
 
-You can find more information about controls in **help.pdf**
+You can find more information about controls in `help.pdf`
 
 __**"socket"**__
 
@@ -90,7 +92,7 @@ To control rocket through socket you should send the string with list of four nu
 
 For example [1, 1, 1, 0] means that all engines are working. [0, 0, 0, 1] means that you want to get a new rocket and restart.
 
-As an output you will receive a string with list of dictionaries [{}, {}, {}] with information about every object in simulation. You can see an example of such list in F9LanderClientCORE.py
+As an output you will receive a string with list of dictionaries [{}, {}, {}] with information about every object in simulation. You can see an example of such list in `F9LanderClientCORE.py`
 
 Socket address ('127.0.0.1', 50007)
 
@@ -122,7 +124,7 @@ $ python F9LanderClientCORE.py
 
 If you want to write your own API script:
 
-First start the server F9LanderCORE.py and then you can send the string with list [up, left, right, new] to socket ('127.0.0.1', 50007). "up", "left", "right" and "new" can be 1 or 0.
+First start the server `F9LanderCORE.py` and then you can send the string with list [up, left, right, new] to socket ('127.0.0.1', 50007). "up", "left", "right" and "new" can be 1 or 0.
 
 You can modify the socket address and port by running the server with the following options:
 
@@ -149,6 +151,13 @@ __To show opened sockets in Ubuntu__
 ```bash
 $ netstat -ntlp | grep LISTEN
 ```
+
+__Experimental version with RESTful API__
+
+If you don't like TCP sockets as a default interface, there is an experimental version with RESTful API:
+
+`./experiments/RESTfulAPI`
+
 ______________________________________________
 
 ###Files:
@@ -160,6 +169,8 @@ ______________________________________________
 `F9LanderPureSocketClient.py` - external control script | client | pure socket API without wrapper |
 
 `./experiments` - folder with experimental scripts
+
+`./experiments/RESTfulAPI` - version with RESTful API
 
 `./res` - folder with resources
 
