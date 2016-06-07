@@ -562,6 +562,7 @@ def main():
     if args.test > 0:
         test_iterations = args.test
         log_file = open("./log/log.txt", "w")
+        log_file.write("[")
     #
     options = Options(args.socket, args.ip, args.port, args.display)
     world = World(options)
@@ -574,9 +575,10 @@ def main():
         report = simulation.step(world, entities)
         if test_iterations is not None:
             if test_iterations > 0:
-                log_file.write(str(report) + "," + '\n')
+                log_file.write(str(report) + ",")   # + "\n"
                 test_iterations -= 1
             else:
+                log_file.write("]")
                 log_file.close()
                 simulation.running = False
         # print report
