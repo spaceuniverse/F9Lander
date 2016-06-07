@@ -142,6 +142,12 @@ $ python F9LanderCORE.py -d
 
 Note that in this mode you can't control agent using keyboard.
 
+In test mode you can launch the simulation for limited number of iterations. Log will be saved into `./log/log.txt` file.
+
+```bash
+$ python F9LanderCORE.py -t 42000
+```
+
 ______________________________________________
 
 ###Information:
