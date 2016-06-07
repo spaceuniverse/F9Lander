@@ -553,8 +553,13 @@ def main():
     parser.add_argument("-i", "--ip", type=str, default='127.0.0.1', help="IP address for socket mode")
     parser.add_argument("-p", "--port", type=int, default=50007, help="Port")
     parser.add_argument("-d", "--display", action="store_true", help="Run without graphics. Text output only.")
+    parser.add_argument("-t", "--test", type=int, default=-42, help="Test mode. Enter iterations number.")   # 42000
     #
     args = parser.parse_args()
+    #
+    test_iterations = None
+    if args.test > 0:
+        test_iterations = args.test
     #
     options = Options(args.socket, args.ip, args.port, args.display)
     world = World(options)
@@ -565,6 +570,11 @@ def main():
     #
     while simulation.running:
         report = simulation.step(world, entities)
+        if test_iterations is not None:
+            if test_iterations > 0:
+                test_iterations -= 1
+            else:
+                simulation.running = False
         # print report
         # time.sleep(1.0)
     print entities
