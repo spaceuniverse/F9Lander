@@ -33,7 +33,7 @@ while True:
     # 'angle': -0.05268074572086334, 'px': 43.301612854003906, 'py': 42.239990234375, 'live': True, 'contact': False,
     # 'fuel': 791.9, 'type': 'actor', 'enj': True, 'wind': 32.0} {'angle': 0.01994907110929489,
     # 'px': 52.044925689697266, 'py': 4.305685997009277, 'vx': 0.8977082371711731, 'vy': 0.7780137658119202,
-    # 'type': 'decoration'} {'step': 99, 'type': 'system', 'flight_status': 'none'}
+    # 'type': 'decoration'} {'step': 99, 'type': 'system', 'flight_status': 'none', 'action': [0, 0, 1, 0]}
     #
     # 'dist' - distance between two nearest points of rocket and a platform body
     #
@@ -63,6 +63,8 @@ while True:
     # 'flight_status' - win or loss? | "landed" or "destroyed"?
     #                   "none" means that you don't know, whether you landed or destroyed, or maybe still flying
     #                   "landed" means that you won
+    #
+    # 'action' - action performed in the step
     #
     # random move
     # rnd = np.random.random_sample()

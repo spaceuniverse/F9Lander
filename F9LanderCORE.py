@@ -480,7 +480,7 @@ class Simulation(object):
             self.clock.tick(self.target_fps)
         #
         report_list = self.__global_report__(simulation_array)
-        report_list.append({"step": self.step_number, "flight_status": self.win, "type": "system"})
+        report_list.append({"step": self.step_number, "flight_status": self.win, "type": "system", "action": keys})
         # OUTPUT TO PIPE OR SOCKET HERE
         if self.commands == "socket":
             self.conn.send(str(report_list))
