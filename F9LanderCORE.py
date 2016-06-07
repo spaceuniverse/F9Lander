@@ -67,9 +67,13 @@ class Platform(object):
     def __init__(self, world_obj):
         self.type = "decoration"
         self.color = (255, 255, 255, 255)
-        self.position_x = (world_obj.screen_width / world_obj.pixels_per_meter) / 2
+        #
+        self.screen_width = world_obj.screen_width
+        self.pixels_per_meter = world_obj.pixels_per_meter
+        #
+        self.position_x = (self.screen_width / self.pixels_per_meter) / 2.0
         self.position_y = 3.1   # 3
-        self.position_angle = 0
+        self.position_angle = 0.0
         #
         self.height = 0.8
         self.width = 12
@@ -96,12 +100,13 @@ class Platform(object):
         self.report()
 
     def __inc_angle__(self):
-        self.position_angle += 0.025
-        if self.position_angle >= 360:
-            self.position_angle = 0
+        self.position_angle += np.pi / 110.0   # 0.025
+        if self.position_angle >= np.pi * 2.0 * 57.0:   # 360.0
+            self.position_angle = 0.0
+        # if not fixed ---- manual set coordinates --- to start here
 
     def __angle_flow__(self):
-        self.body.angle = np.sin(self.position_angle) / 30
+        self.body.angle = np.sin(self.position_angle) / 30.0
 
     def __position_go__(self):
         self.vel_x = np.sin(self.position_angle) * 1.3   # / 30
