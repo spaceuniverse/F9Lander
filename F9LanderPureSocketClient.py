@@ -26,7 +26,8 @@ while True:
     agent_state = (item for item in data if item["type"] == "actor").next()
     platform_state = (item for item in data if item["type"] == "decoration").next()
     system_state = (item for item in data if item["type"] == "system").next()
-    print agent_state, platform_state, system_state
+    # print agent_state, platform_state, system_state
+    print "{" + str(agent_state) + "," + str(platform_state) + "," + str(system_state) + "}" + ","
     # output example
     # {'dist': 30.396299362182617, 'contact_time': 0, 'vx': -21.335142135620117, 'vy': 0.9811121821403503,
     # 'angle': -0.05268074572086334, 'px': 43.301612854003906, 'py': 42.239990234375, 'live': True, 'contact': False,
