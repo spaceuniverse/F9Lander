@@ -371,6 +371,9 @@ class Simulation(object):
         #
         self.terminal_state = False
         #
+        self.score = 0
+        self.score_flag = False
+        #
         if self.commands == "socket":
             self.sock = socket.socket()
             self.sock.bind(self.address)
@@ -382,6 +385,7 @@ class Simulation(object):
     def __restart__(self, world_obj, simulation_array):
         self.win = "none"
         self.terminal_state = False
+        self.score_flag = False
         print "B: Bodies, objects", len(world_obj.world.bodies), len(simulation_array)
         for entity in simulation_array:
             if entity.type == "actor":
@@ -401,6 +405,17 @@ class Simulation(object):
     def __is_terminal_state__(self, entity):
         if self.win == "destroyed" or self.win == "landed" or entity.body.position[1] <= 0.0:
             self.terminal_state = True
+
+    def __get_score__(self, entity):
+        if self.win == "landed" and not self.score_flag:
+            self.score += (100.0 + entity.fuel)
+            self.score_flag = True
+        elif self.terminal_state and not self.score_flag:
+            self.score += -100.0
+            self.score_flag = True
+        elif not self.terminal_state and entity.dist1 >= 0.021 and entity.dist2 >= 0.021:
+            # remove this if you don't want to use heuristic
+            self.score += 1.0 / (1.0 + entity.dist1)   # + entity.contact_time
 
     def step(self, world_obj, simulation_array=[]):
         keys = [0, 0, 0, 0]
@@ -430,6 +445,7 @@ class Simulation(object):
                 # self.message += str(entity.body.position)
                 # self.message += "bp " + str(entity.body.position[1])
                 # self.message += "ts " + str(self.terminal_state)
+                # self.message += "sc " + str(self.score)
                 self.message += "| Dist: " + str(np.round(np.amin([entity.dist1, entity.dist2]), 1))   # \
                 #                + " " + str(np.round(entity.dist1, 1)) + " " + str(np.round(entity.dist2, 1))
                 self.message += " | Fuel: " + str(np.round((entity.fuel * entity.enj), 1)) + " | Eng: " + str(entity.enj)\
@@ -480,6 +496,7 @@ class Simulation(object):
                     self.win = "destroyed"
                     # entity.wind = False
                 self.__is_terminal_state__(entity)
+                self.__get_score__(entity)
         world_obj.world.Step(1.0 / self.target_fps, 10, 10)   # 10 10 | 6 2
         world_obj.world.ClearForces()   # but why?
         #
@@ -492,7 +509,7 @@ class Simulation(object):
         #
         report_list = self.__global_report__(simulation_array)
         report_list.append({"step": self.step_number, "flight_status": self.win, "type": "system", "action": keys,
-                            "is_terminal_state": self.terminal_state})
+                            "is_terminal_state": self.terminal_state, "score": self.score})
         # OUTPUT TO PIPE OR SOCKET HERE
         if self.commands == "socket":
             self.conn.send(str(report_list))

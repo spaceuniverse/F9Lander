@@ -36,7 +36,8 @@ while True:
     # {'angle': 0.01994907110929489, 'px': 52.044925689697266, 'py': 4.305685997009277, 'vx': 0.8977082371711731,
     # 'vy': 0.7780137658119202, 'type': 'decoration'}
     #
-    # {'step': 99, 'type': 'system', 'flight_status': 'none', 'action': [0, 0, 1, 0], 'is_terminal_state': False}
+    # {'step': 99, 'type': 'system', 'flight_status': 'none', 'action': [0, 0, 1, 0], 'is_terminal_state': False,
+    # 'score': 25.16671304950599}
     #
     #
     # 'dist' - distance between two nearest points of rocket and a platform body
@@ -74,6 +75,8 @@ while True:
     #                       or drowned etc.
     #                       Difference with 'flight_status' is in the point of view, 'flight_status' describes only the
     #                       rocket status but not whole system.
+    #
+    # 'score' - synthetic score, you can use it or write your own
     #
     # random move
     # rnd = np.random.random_sample()

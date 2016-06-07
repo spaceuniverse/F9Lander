@@ -39,7 +39,6 @@ class F9GameClient:
         status = False
         if system["flight_status"] == "destroyed" or system["flight_status"] == "landed" or agent["py"] <= 0.0:
             status = True
-
         return status
 
     def getReward(self, state):
@@ -48,10 +47,11 @@ class F9GameClient:
         if system["flight_status"] == "landed":
             score = 100.0
         elif self.isTerminalState(state):
+            # MAYBE BUG ---> delete "or system["flight_status"] == "landed" from isTerminalState
+            # but elif fixed it, so it's feature
             score = -100.0
         else:  # Remove this if you don't want to use handcrafted heuristic
             score = 1.0 / (1 + agent["dist"]) + agent["contact_time"]
-
         self.totalScore += score
         return score
 
@@ -69,7 +69,6 @@ class F9GameClient:
             platform_state = (item for item in data if item["type"] == "decoration").next()
             system_state = (item for item in data if item["type"] == "system").next()
             state = [agent_state, platform_state, system_state]
-
         return state
 
     def doAction(self, action):
@@ -115,7 +114,6 @@ class Snapshot:
             print "Loading snapshot", file_path[-1]
             state = pickle.load(f)
             f.close()
-
         return state
 
 
