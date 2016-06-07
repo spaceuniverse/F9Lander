@@ -369,6 +369,8 @@ class Simulation(object):
         #
         self.win = "none"   # "none", "landed", "destroyed"
         #
+        self.terminal_state = False
+        #
         if self.commands == "socket":
             self.sock = socket.socket()
             self.sock.bind(self.address)
@@ -379,6 +381,7 @@ class Simulation(object):
 
     def __restart__(self, world_obj, simulation_array):
         self.win = "none"
+        self.terminal_state = False
         print "B: Bodies, objects", len(world_obj.world.bodies), len(simulation_array)
         for entity in simulation_array:
             if entity.type == "actor":
@@ -394,6 +397,10 @@ class Simulation(object):
         for entity in simulation_array:
             report_list.append(entity.report())
         return report_list
+
+    def __is_terminal_state__(self, entity):
+        if self.win == "destroyed" or self.win == "landed" or entity.body.position[1] <= 0.0:
+            self.terminal_state = True
 
     def step(self, world_obj, simulation_array=[]):
         keys = [0, 0, 0, 0]
@@ -421,6 +428,8 @@ class Simulation(object):
                 entity.act(keys=keys)
                 # self position
                 # self.message += str(entity.body.position)
+                # self.message += "bp " + str(entity.body.position[1])
+                # self.message += "ts " + str(self.terminal_state)
                 self.message += "| Dist: " + str(np.round(np.amin([entity.dist1, entity.dist2]), 1))   # \
                 #                + " " + str(np.round(entity.dist1, 1)) + " " + str(np.round(entity.dist2, 1))
                 self.message += " | Fuel: " + str(np.round((entity.fuel * entity.enj), 1)) + " | Eng: " + str(entity.enj)\
@@ -461,7 +470,8 @@ class Simulation(object):
         # checking status
         for entity in simulation_array:
             if entity.type == "actor":
-                if entity.live and entity.contact and entity.contact_time >= 2.75 and -0.29 < entity.body.angle < 0.29:   # why 2.25 read in obj field + 0.5
+                if entity.live and entity.contact and entity.contact_time >= 2.75 and -0.29 < entity.body.angle < 0.29:
+                    # why 2.25 read in obj field + 0.5
                     entity.color = (0, 255, 0, 255)
                     self.win = "landed"
                     # entity.wind = False   # stops wind for this obj
@@ -469,6 +479,7 @@ class Simulation(object):
                     entity.color = (255, 0, 0, 255)
                     self.win = "destroyed"
                     # entity.wind = False
+                self.__is_terminal_state__(entity)
         world_obj.world.Step(1.0 / self.target_fps, 10, 10)   # 10 10 | 6 2
         world_obj.world.ClearForces()   # but why?
         #
@@ -480,7 +491,8 @@ class Simulation(object):
             self.clock.tick(self.target_fps)
         #
         report_list = self.__global_report__(simulation_array)
-        report_list.append({"step": self.step_number, "flight_status": self.win, "type": "system", "action": keys})
+        report_list.append({"step": self.step_number, "flight_status": self.win, "type": "system", "action": keys,
+                            "is_terminal_state": self.terminal_state})
         # OUTPUT TO PIPE OR SOCKET HERE
         if self.commands == "socket":
             self.conn.send(str(report_list))

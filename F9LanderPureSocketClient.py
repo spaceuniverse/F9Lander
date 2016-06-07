@@ -31,9 +31,13 @@ while True:
     # output example
     # {'dist': 30.396299362182617, 'contact_time': 0, 'vx': -21.335142135620117, 'vy': 0.9811121821403503,
     # 'angle': -0.05268074572086334, 'px': 43.301612854003906, 'py': 42.239990234375, 'live': True, 'contact': False,
-    # 'fuel': 791.9, 'type': 'actor', 'enj': True, 'wind': 32.0} {'angle': 0.01994907110929489,
-    # 'px': 52.044925689697266, 'py': 4.305685997009277, 'vx': 0.8977082371711731, 'vy': 0.7780137658119202,
-    # 'type': 'decoration'} {'step': 99, 'type': 'system', 'flight_status': 'none', 'action': [0, 0, 1, 0]}
+    # 'fuel': 791.9, 'type': 'actor', 'enj': True, 'wind': 32.0}
+    #
+    # {'angle': 0.01994907110929489, 'px': 52.044925689697266, 'py': 4.305685997009277, 'vx': 0.8977082371711731,
+    # 'vy': 0.7780137658119202, 'type': 'decoration'}
+    #
+    # {'step': 99, 'type': 'system', 'flight_status': 'none', 'action': [0, 0, 1, 0], 'is_terminal_state': False}
+    #
     #
     # 'dist' - distance between two nearest points of rocket and a platform body
     #
@@ -65,6 +69,11 @@ while True:
     #                   "landed" means that you won
     #
     # 'action' - action performed in the step
+    #
+    # 'is_terminal_state' - means that the system has reached it's terminal state: rocket landed or destroyed
+    #                       or drowned etc.
+    #                       Difference with 'flight_status' is in the point of view, 'flight_status' describes only the
+    #                       rocket status but not whole system.
     #
     # random move
     # rnd = np.random.random_sample()
