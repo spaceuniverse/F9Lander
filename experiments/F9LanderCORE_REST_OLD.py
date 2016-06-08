@@ -70,13 +70,9 @@ class Platform(object):
     def __init__(self, world_obj):
         self.type = "decoration"
         self.color = (255, 255, 255, 255)
-        #
-        self.screen_width = world_obj.screen_width
-        self.pixels_per_meter = world_obj.pixels_per_meter
-        #
-        self.position_x = (self.screen_width / self.pixels_per_meter) / 2.0
+        self.position_x = (world_obj.screen_width / world_obj.pixels_per_meter) / 2
         self.position_y = 3.1   # 3
-        self.position_angle = 0.0
+        self.position_angle = 0
         #
         self.height = 0.8
         self.width = 12
@@ -103,13 +99,12 @@ class Platform(object):
         self.report()
 
     def __inc_angle__(self):
-        self.position_angle += np.pi / 110.0   # 0.025
-        if self.position_angle >= np.pi * 2.0 * 57.0:   # 360.0
-            self.position_angle = 0.0
-        # if not fixed ---- manual set coordinates --- to start here
+        self.position_angle += 0.025
+        if self.position_angle >= 360:
+            self.position_angle = 0
 
     def __angle_flow__(self):
-        self.body.angle = np.sin(self.position_angle) / 30.0
+        self.body.angle = np.sin(self.position_angle) / 30
 
     def __position_go__(self):
         self.vel_x = np.sin(self.position_angle) * 1.3   # / 30
@@ -377,11 +372,6 @@ class Simulation(object):
         #
         self.win = "none"   # "none", "landed", "destroyed"
         #
-        self.terminal_state = False
-        #
-        self.score = 0
-        self.score_flag = False
-        #
         if self.commands == "socket":
             self.sock = socket.socket()
             self.sock.bind(self.address)
@@ -392,8 +382,6 @@ class Simulation(object):
 
     def __restart__(self, world_obj, simulation_array):
         self.win = "none"
-        self.terminal_state = False
-        self.score_flag = False
         print "B: Bodies, objects", len(world_obj.world.bodies), len(simulation_array)
         for entity in simulation_array:
             if entity.type == "actor":
@@ -409,21 +397,6 @@ class Simulation(object):
         for entity in simulation_array:
             report_list.append(entity.report())
         return report_list
-
-    def __is_terminal_state__(self, entity):
-        if self.win == "destroyed" or self.win == "landed" or entity.body.position[1] <= 0.0:
-            self.terminal_state = True
-
-    def __get_score__(self, entity):
-        if self.win == "landed" and not self.score_flag:
-            self.score += (100.0 + entity.fuel)
-            self.score_flag = True
-        elif self.terminal_state and not self.score_flag:
-            self.score += -100.0
-            self.score_flag = True
-        elif not self.terminal_state and entity.dist1 >= 0.021 and entity.dist2 >= 0.021:
-            # remove this if you don't want to use heuristic
-            self.score += 1.0 / (1.0 + entity.dist1)   # + entity.contact_time
 
     def step(self, world_obj, simulation_array=[], command="9999"):   # "9999" is a placeholder
         keys = [0, 0, 0, 0]
@@ -455,9 +428,6 @@ class Simulation(object):
                 entity.act(keys=keys)
                 # self position
                 # self.message += str(entity.body.position)
-                # self.message += "bp " + str(entity.body.position[1])
-                # self.message += "ts " + str(self.terminal_state)
-                # self.message += "sc " + str(self.score)
                 self.message += "| Dist: " + str(np.round(np.amin([entity.dist1, entity.dist2]), 1))   # \
                 #                + " " + str(np.round(entity.dist1, 1)) + " " + str(np.round(entity.dist2, 1))
                 self.message += " | Fuel: " + str(np.round((entity.fuel * entity.enj), 1)) + " | Eng: " + str(entity.enj)\
@@ -498,8 +468,7 @@ class Simulation(object):
         # checking status
         for entity in simulation_array:
             if entity.type == "actor":
-                if entity.live and entity.contact and entity.contact_time >= 2.75 and -0.29 < entity.body.angle < 0.29:
-                    # why 2.25 read in obj field + 0.5
+                if entity.live and entity.contact and entity.contact_time >= 2.75 and -0.29 < entity.body.angle < 0.29:   # why 2.25 read in obj field + 0.5
                     entity.color = (0, 255, 0, 255)
                     self.win = "landed"
                     # entity.wind = False   # stops wind for this obj
@@ -507,8 +476,6 @@ class Simulation(object):
                     entity.color = (255, 0, 0, 255)
                     self.win = "destroyed"
                     # entity.wind = False
-                self.__is_terminal_state__(entity)
-                self.__get_score__(entity)
         world_obj.world.Step(1.0 / self.target_fps, 10, 10)   # 10 10 | 6 2
         world_obj.world.ClearForces()   # but why?
         #
@@ -520,8 +487,7 @@ class Simulation(object):
             self.clock.tick(self.target_fps)
         #
         report_list = self.__global_report__(simulation_array)
-        report_list.append({"step": self.step_number, "flight_status": self.win, "type": "system", "action": keys,
-                            "is_terminal_state": self.terminal_state, "score": self.score})
+        report_list.append({"step": self.step_number, "flight_status": self.win, "type": "system"})
         # OUTPUT TO PIPE OR SOCKET HERE
         if self.commands == "socket":
             self.conn.send(str(report_list))
@@ -556,18 +522,7 @@ class Simulation(object):
 
 class UserAPI(Resource):
     def get(self, command):
-        global test_iterations
-        report = "Done"
-        if simulation.running:
-            report = simulation.step(world, entities, command)
-            if test_iterations is not None:
-                if test_iterations > 0:
-                    log_file.write(str(report) + ",")   # + "\n"
-                    test_iterations -= 1
-                else:
-                    log_file.write("]")
-                    log_file.close()
-                    simulation.running = False
+        report = simulation.step(world, entities, command)
         return report
 
 # rest
@@ -580,16 +535,8 @@ parser.add_argument("-s", "--socket", action="store_true", help="Run game in soc
 parser.add_argument("-i", "--ip", type=str, default='127.0.0.1', help="IP address for socket mode")
 parser.add_argument("-p", "--port", type=int, default=50007, help="Port")
 parser.add_argument("-d", "--display", action="store_true", help="Run without graphics. Text output only.")
-parser.add_argument("-t", "--test", type=int, default=-42, help="Test mode. Enter iterations number.")   # 42000
 #
 args = parser.parse_args()
-#
-test_iterations = None
-log_file = None
-if args.test > 0:
-    test_iterations = args.test
-    log_file = open("./log/log.txt", "w")
-    log_file.write("[")
 #
 options = Options(args.socket, args.ip, args.port, args.display)
 world = World(options)
@@ -608,8 +555,7 @@ api.add_resource(UserAPI, '/<string:command>')
 print entities
 
 # rest
-# app.run(debug=False)
-app.run(threaded=True, debug=False, host=args.ip, port=args.port)
+app.run(debug=False)
 
 # -------------------------------------------------- #
 # --------------- you have landed ------------------ #
