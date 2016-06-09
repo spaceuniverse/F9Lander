@@ -576,6 +576,8 @@ api = Api(app)
 #
 # Command line options
 parser = argparse.ArgumentParser()
+# in the "REST" version - pure socket mode could be unstable | key "-s" |
+# please use the core version from the repo root folder
 parser.add_argument("-s", "--socket", action="store_true", help="Run game in socket mode")
 parser.add_argument("-i", "--ip", type=str, default='127.0.0.1', help="IP address for socket mode")
 parser.add_argument("-p", "--port", type=int, default=5000, help="Port")
