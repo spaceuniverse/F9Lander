@@ -578,7 +578,7 @@ api = Api(app)
 parser = argparse.ArgumentParser()
 parser.add_argument("-s", "--socket", action="store_true", help="Run game in socket mode")
 parser.add_argument("-i", "--ip", type=str, default='127.0.0.1', help="IP address for socket mode")
-parser.add_argument("-p", "--port", type=int, default=50007, help="Port")
+parser.add_argument("-p", "--port", type=int, default=5000, help="Port")
 parser.add_argument("-d", "--display", action="store_true", help="Run without graphics. Text output only.")
 parser.add_argument("-t", "--test", type=int, default=-42, help="Test mode. Enter iterations number.")   # 42000
 #
