@@ -134,7 +134,7 @@ $ python F9LanderCORE.py -i 127.0.0.1 -p 50007
 
 As an output you will get a string with the list of dictionaries [{}, {}, {}] with information about every object in simulation.
 
-You can run game without graphics with text output only (graphics is enabled by default):
+You can **run game without graphics** with text output only (graphics is enabled by default):
 
 ```bash
 $ python F9LanderCORE.py -d
@@ -142,7 +142,7 @@ $ python F9LanderCORE.py -d
 
 Note that in this mode you can't control agent using keyboard.
 
-In test mode you can launch the simulation for limited number of iterations. Log will be saved into `./log/log.txt` file.
+In **test mode** you can launch the simulation for limited number of iterations. Log will be saved into `./log/log.txt` file.
 
 ```bash
 $ python F9LanderCORE.py -t 42000
